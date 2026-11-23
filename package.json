@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Real-time institutional-grade global market terminal tracking Top 100 Equities, Crypto, Metals, Energy, Currencies, and Sovereign Indices",
   "scripts": {
+    "build": "echo Static build ready",
     "dev": "npx wrangler pages dev .",
     "deploy": "npx wrangler pages deploy ."
   },
