@@ -1941,7 +1941,6 @@
                 "low_52w": 85.0
         }
 ]
-      ]
     };
 
     let currentMode = 'table';
@@ -2327,6 +2326,7 @@
     initPillStrip();
     selectAsset("NVDA");
     applyFilter();
+    refreshLiveData();
     setInterval(refreshLiveData, 30000);
   </script>
 </body>
