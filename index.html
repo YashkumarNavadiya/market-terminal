@@ -111,6 +111,15 @@
       </button>
     </div>
 
+    <!-- Real-Time Sync & Fast Manual Refresh -->
+    <div class="flex items-center gap-2">
+      <button id="btn-sync-now" onclick="triggerManualSync()" title="Instant live edge quote fetch" class="px-2.5 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700/80 hover:border-cyan-500/50 text-slate-300 hover:text-white flex items-center gap-2 text-xs font-mono transition shadow-sm group">
+        <span id="sync-spinner" class="inline-block transition-transform duration-500">↻</span>
+        <span id="sync-status-text" class="hidden sm:inline">Sync Live</span>
+        <span id="sync-countdown" class="px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700 text-[10px] text-cyan-400 font-bold">30s</span>
+      </button>
+    </div>
+
     <!-- Quick Live Status Indicator -->
     <div class="hidden xl:flex items-center gap-2 text-[11px] font-mono">
       <div class="bg-slate-900/80 border border-slate-800 rounded px-2 py-1">
@@ -155,10 +164,13 @@
               <input 
                 type="text" 
                 id="search-input" 
-                placeholder="Search symbol, company, or sector..." 
+                placeholder="Search symbol, company, or sector (Press '/' to focus)..." 
                 oninput="applyFilter()"
-                class="w-full bg-[#070a12] border border-slate-700/80 rounded-lg pl-8 pr-3 py-1.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                class="w-full bg-[#070a12] border border-slate-700/80 rounded-lg pl-8 pr-10 py-1.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
               />
+              <span class="absolute inset-y-0 right-0 pr-2 flex items-center pointer-events-none">
+                <kbd class="px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700 text-[10px] text-slate-400 font-mono">/</kbd>
+              </span>
             </div>
 
             <!-- Sector Dropdown -->
@@ -333,6 +345,9 @@
             <span>52W Low: <strong id="chart-low" class="text-slate-200">$124.50</strong></span>
             <span>Current: <strong id="chart-mid" class="text-red-400">$125.53</strong></span>
             <span>52W High: <strong id="chart-high" class="text-slate-200">$243.37</strong></span>
+          </div>
+          <div class="w-full bg-slate-800/80 h-1.5 rounded-full overflow-hidden relative my-1">
+            <div id="chart-52w-pos" class="bg-gradient-to-r from-cyan-500 to-blue-500 h-full rounded-full transition-all duration-500" style="width: 45%;"></div>
           </div>
         </div>
 
@@ -1948,15 +1963,56 @@
     let activeSortCol = 'rank';
     let sortAsc = true;
     let selectedTier = 'ALL';
+    let countdownSec = 30;
+    let countdownInterval = null;
+
+    function resetCountdown() {
+      countdownSec = 30;
+      updateCountdownDisplay();
+    }
+
+    function updateCountdownDisplay() {
+      const el = document.getElementById('sync-countdown');
+      if (el) el.innerText = `${countdownSec}s`;
+    }
+
+    function startCountdown() {
+      if (countdownInterval) clearInterval(countdownInterval);
+      countdownInterval = setInterval(() => {
+        countdownSec--;
+        if (countdownSec <= 0) {
+          countdownSec = 30;
+          refreshLiveData();
+        }
+        updateCountdownDisplay();
+      }, 1000);
+    }
+
+    async function triggerManualSync() {
+      const spinner = document.getElementById('sync-spinner');
+      if (spinner) spinner.style.transform = 'rotate(360deg)';
+      const text = document.getElementById('sync-status-text');
+      if (text) text.innerText = 'Syncing...';
+      await refreshLiveData();
+      setTimeout(() => {
+        if (spinner) spinner.style.transform = 'rotate(0deg)';
+        if (text) text.innerText = 'Sync Live';
+        resetCountdown();
+      }, 400);
+    }
 
     async function refreshLiveData() {
       try {
-        const resp = await fetch('/api/live');
+        const resp = await fetch('/api/live?t=' + Date.now());
         if (resp.ok) {
           const fresh = await resp.json();
           if (fresh && fresh.companies && fresh.companies.length > 0) {
             LIVE_DATA = fresh;
-            document.getElementById('last-updated-label').innerText = `Last Live Sync: ${fresh.timestamp}`;
+            try {
+              localStorage.setItem('apex_market_cache', JSON.stringify(fresh));
+            } catch (e) {}
+            const syncEl = document.getElementById('last-updated-label');
+            if (syncEl) syncEl.innerText = `Last Live Sync: ${fresh.timestamp}`;
             initMarquee();
             initPillStrip();
             applyFilter();
@@ -2161,6 +2217,11 @@
       if (co.low_52w) document.getElementById('chart-low').innerText = `$${co.low_52w.toFixed(2)}`;
       if (co.high_52w) document.getElementById('chart-high').innerText = `$${co.high_52w.toFixed(2)}`;
       document.getElementById('chart-mid').innerText = `$${co.price ? co.price.toFixed(2) : '--'}`;
+      if (co.low_52w && co.high_52w && co.high_52w > co.low_52w && co.price) {
+        const pct = Math.min(100, Math.max(0, ((co.price - co.low_52w) / (co.high_52w - co.low_52w)) * 100));
+        const posEl = document.getElementById('chart-52w-pos');
+        if (posEl) posEl.style.width = `${pct.toFixed(1)}%`;
+      }
     }
 
     function selectAsset(ticker) {
@@ -2322,12 +2383,35 @@
       a.click();
     }
 
+    // Fast path: load cached snapshot immediately if available
+    try {
+      const cached = localStorage.getItem('apex_market_cache');
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (parsed && parsed.companies && parsed.companies.length > 0) {
+          LIVE_DATA = parsed;
+        }
+      }
+    } catch (e) {}
+
+    // Global keyboard hotkey
+    window.addEventListener('keydown', (e) => {
+      if ((e.key === '/' || (e.ctrlKey && e.key === 'k')) && document.activeElement.id !== 'search-input') {
+        e.preventDefault();
+        const input = document.getElementById('search-input');
+        if (input) {
+          input.focus();
+          input.select();
+        }
+      }
+    });
+
     initMarquee();
     initPillStrip();
     selectAsset("NVDA");
     applyFilter();
     refreshLiveData();
-    setInterval(refreshLiveData, 30000);
+    startCountdown();
   </script>
 </body>
 </html>
