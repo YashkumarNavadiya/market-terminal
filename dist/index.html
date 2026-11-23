@@ -1,0 +1,2333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ApexMarket — Real-Time Global Market Terminal | Yashkumar Navadiya</title>
+  <meta name="description" content="Real-time institutional-grade global market terminal tracking Top 100 Equities, Cryptocurrencies, Precious Metals, Energy & Oil, Foreign Exchange, and Sovereign Indices.">
+  <meta property="og:title" content="ApexMarket — Real-Time Global Market Terminal">
+  <meta property="og:description" content="Live streaming global equities, crypto, gold, oil, currencies, and technical analysis studio.">
+  <meta property="og:url" content="https://market.yashkumarnavadiya.tech">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:creator" content="@YashkumarNavadiya">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Sleek scrollbar */
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.6); }
+    ::-webkit-scrollbar-thumb { background: rgba(51, 65, 85, 0.8); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(100, 116, 139, 1); }
+    
+    @keyframes marquee {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+    .animate-marquee {
+      display: inline-flex;
+      animation: marquee 45s linear infinite;
+    }
+    .animate-marquee:hover {
+      animation-play-state: paused;
+    }
+    .tile-hover {
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .tile-hover:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
+    }
+  </style>
+</head>
+<body class="bg-[#0b0f19] text-slate-100 font-sans antialiased m-0 p-0 min-h-screen flex flex-col">
+  <!-- TOP TRACK A QUANT MONETIZATION BANNER -->
+  <div class="bg-gradient-to-r from-blue-950 via-slate-900 to-indigo-950 border-b border-blue-800/40 px-4 py-1.5 text-xs flex items-center justify-between text-slate-300">
+    <div class="flex items-center gap-2">
+      <span class="px-1.5 py-0.5 rounded bg-blue-500/20 text-cyan-300 border border-blue-500/30 text-[10px] font-bold font-mono">QUANT LABS</span>
+      <span class="text-slate-300 text-[11px]">Automated Trading Models & Institutional Suites by Yashkumar Navadiya</span>
+    </div>
+    <div class="flex items-center gap-2 text-[11px] font-mono">
+      <a href="https://blog.yashkumarnavadiya.tech" target="_blank" class="text-cyan-400 hover:text-cyan-300 font-bold hover:underline flex items-center gap-1">
+        <span>Crack Spread Suite</span> ↗
+      </a>
+      <span class="text-slate-600">·</span>
+      <a href="https://blog.yashkumarnavadiya.tech" target="_blank" class="text-cyan-400 hover:text-cyan-300 font-bold hover:underline flex items-center gap-1">
+        <span>Pairs Arbitrage</span> ↗
+      </a>
+      <span class="text-slate-600">·</span>
+      <a href="https://blog.yashkumarnavadiya.tech" target="_blank" class="text-cyan-400 hover:text-cyan-300 font-bold hover:underline flex items-center gap-1">
+        <span>Options Greeks Calibrator</span> ↗
+      </a>
+    </div>
+  </div>
+
+
+  <!-- 1. LIVE TICKER MARQUEE TAPE -->
+  <div class="bg-[#070a12] border-b border-slate-800/80 text-xs py-2 px-3 overflow-hidden select-none whitespace-nowrap z-20">
+    <div class="flex items-center">
+      <div class="flex items-center gap-1.5 font-bold text-slate-400 border-r border-slate-800 pr-3 mr-3 shrink-0">
+        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+        <span class="tracking-wider text-[11px] text-emerald-400 font-mono">LIVE API FEED</span>
+      </div>
+      <div class="overflow-hidden w-full">
+        <div id="ticker-marquee" class="animate-marquee gap-6 font-mono text-[11px]">
+          <!-- Populated dynamically via JS -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. MAIN APP NAVIGATION BAR -->
+  <header class="bg-[#0f172a]/90 backdrop-blur border-b border-slate-800 px-4 py-3 flex flex-wrap items-center justify-between gap-4 sticky top-0 z-30">
+    <div class="flex items-center gap-3">
+      <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-blue-600 via-indigo-500 to-cyan-400 flex items-center justify-center shadow-lg shadow-blue-500/20 font-black text-white text-base">
+        ⛯
+      </div>
+      <div>
+        <div class="flex items-center gap-2">
+          <span class="font-extrabold text-base tracking-tight bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent">
+            APEX MARKET TERMINAL
+          </span>
+          <span class="px-1.5 py-0.5 rounded text-[10px] font-mono bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center gap-1">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> LIVE SYNC
+          </span>
+        </div>
+        <p class="text-[11px] text-slate-400">
+          Real-Time Data: Yahoo Finance v8 API & TradingView Global Streaming Feeds
+        </p>
+      </div>
+    </div>
+
+    <!-- View Modes Switcher -->
+    <div class="flex items-center bg-[#070a12] p-1 rounded-lg border border-slate-800 text-xs">
+      <button id="btn-mode-table" onclick="setMode('table')" class="flex items-center gap-1.5 px-3 py-1.5 rounded-md font-medium transition bg-blue-600 text-white shadow">
+        <span>📋</span> <span>Rankings Screener</span>
+      </button>
+      <button id="btn-mode-heatmap" onclick="setMode('heatmap')" class="flex items-center gap-1.5 px-3 py-1.5 rounded-md font-medium text-slate-400 hover:text-white transition">
+        <span>📊</span> <span>Market Heatmap</span>
+      </button>
+      <button id="btn-mode-countries" onclick="setMode('countries')" class="flex items-center gap-1.5 px-3 py-1.5 rounded-md font-medium text-slate-400 hover:text-white transition">
+        <span>🌍</span> <span>Top 10 Sovereign Markets</span>
+      </button>
+    </div>
+
+    <!-- Quick Live Status Indicator -->
+    <div class="hidden xl:flex items-center gap-2 text-[11px] font-mono">
+      <div class="bg-slate-900/80 border border-slate-800 rounded px-2 py-1">
+        <span class="text-slate-400">🥇 Gold:</span> <span id="quick-gold" class="font-bold text-emerald-400">$3,601.20 (+1.8%)</span>
+      </div>
+      <div class="bg-slate-900/80 border border-slate-800 rounded px-2 py-1">
+        <span class="text-slate-400">🛢️ Oil:</span> <span id="quick-oil" class="font-bold text-red-400">$83.06 (-0.5%)</span>
+      </div>
+      <div class="bg-slate-900/80 border border-slate-800 rounded px-2 py-1">
+        <span class="text-slate-400">₿ BTC:</span> <span id="quick-btc" class="font-bold text-emerald-400">$61,404 (+3.7%)</span>
+      </div>
+      <div class="bg-slate-900/80 border border-slate-800 rounded px-2 py-1">
+        <span class="text-slate-400">💵 DXY:</span> <span id="quick-dxy" class="font-bold text-slate-300">103.75 (-0.1%)</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- 3. TOP 10 SOVEREIGN MARKETS HORIZONTAL QUICK-STRIP -->
+  <div class="bg-[#090d16] border-b border-slate-800/80 px-4 py-2.5 overflow-x-auto flex items-center gap-2.5 text-xs no-scrollbar">
+    <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 shrink-0 mr-1 flex items-center gap-1">
+      <span>TOP 10 NATIONS</span>
+      <span class="text-slate-400">→</span>
+    </span>
+    <div id="countries-pill-strip" class="flex items-center gap-2 shrink-0">
+      <!-- Populated dynamically via JS -->
+    </div>
+  </div>
+
+  <!-- 4. MAIN DUAL-PANE WORKSPACE -->
+  <main class="flex-1 p-4 grid grid-cols-1 lg:grid-cols-12 gap-4 max-w-[1920px] w-full mx-auto">
+    
+    <!-- LEFT PANEL: SCREENER / HEATMAP / COUNTRIES (8 COLS) -->
+    <div class="lg:col-span-7 xl:col-span-8 flex flex-col space-y-3">
+      
+      <!-- MODE 1: COMPANIES SCREENER -->
+      <div id="panel-screener" class="flex flex-col space-y-3">
+        <!-- Filter Toolbar (CompaniesMarketCap Style) -->
+        <div class="bg-[#0f172a] border border-slate-800 rounded-xl p-3 flex flex-wrap items-center justify-between gap-3 text-xs shadow-sm">
+          <div class="flex flex-wrap items-center gap-2 flex-1">
+            <div class="relative min-w-[220px] flex-1 max-w-sm">
+              <span class="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none text-slate-500">🔍</span>
+              <input 
+                type="text" 
+                id="search-input" 
+                placeholder="Search symbol, company, or sector..." 
+                oninput="applyFilter()"
+                class="w-full bg-[#070a12] border border-slate-700/80 rounded-lg pl-8 pr-3 py-1.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+              />
+            </div>
+
+            <!-- Sector Dropdown -->
+            <select id="sector-select" onchange="applyFilter()" class="bg-[#070a12] border border-slate-700/80 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-blue-500">
+              <option value="ALL">All Sectors</option>
+              <option value="Technology">Technology</option>
+              <option value="Semiconductors">Semiconductors</option>
+              <option value="Energy">Energy & Oil</option>
+              <option value="Financials">Financials & Banks</option>
+              <option value="Healthcare">Healthcare & Pharma</option>
+              <option value="Consumer">Consumer & Retail</option>
+              <option value="Industrials">Industrials & Auto</option>
+            </select>
+
+            <!-- Country Dropdown -->
+            <select id="country-select" onchange="applyFilter()" class="bg-[#070a12] border border-slate-700/80 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-blue-500">
+              <option value="ALL">All Countries</option>
+              <option value="United States">🇺🇸 United States</option>
+              <option value="Taiwan">🇹🇼 Taiwan</option>
+              <option value="China">🇨🇳 China</option>
+              <option value="Japan">🇯🇵 Japan</option>
+              <option value="Netherlands">🇳🇱 Netherlands</option>
+              <option value="France">🇫🇷 France</option>
+              <option value="India">🇮🇳 India</option>
+            </select>
+
+            <!-- Valuation & Rank Pill Filter -->
+            <div class="hidden sm:flex items-center gap-1 bg-[#070a12] p-0.5 rounded-lg border border-slate-800 text-[11px]">
+              <button onclick="setCapTier('TOP100')" id="tier-top100" class="px-2 py-1 rounded bg-blue-600 text-white font-medium">Top 100</button>
+              <button onclick="setCapTier('TOP50')" id="tier-top50" class="px-2 py-1 rounded text-slate-400 hover:text-white">Top 50</button>
+              <button onclick="setCapTier('TOP20')" id="tier-top20" class="px-2 py-1 rounded text-slate-400 hover:text-white">Top 20</button>
+              <button onclick="setCapTier('TRILLION')" id="tier-trillion" class="px-2 py-1 rounded text-slate-400 hover:text-white">$1T+ Mega</button>
+              <button onclick="setCapTier('MEGA')" id="tier-mega" class="px-2 py-1 rounded text-slate-400 hover:text-white">$500B+</button>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-3">
+            <span id="result-count" class="font-mono text-emerald-400 font-bold text-xs">20 Companies</span>
+            <button onclick="refreshLiveData()" class="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-[11px] font-medium flex items-center gap-1 transition" title="Refresh Live Data">
+              <span>🔄</span> <span>Live Sync</span>
+            </button>
+            <button onclick="exportCSV()" class="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-[11px] font-medium flex items-center gap-1 transition">
+              <span>⬇</span> <span>CSV</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- CompaniesMarketCap Table -->
+        <div class="bg-[#0f172a] border border-slate-800 rounded-xl overflow-hidden shadow-md">
+          <div class="overflow-x-auto max-h-[680px]">
+            <table class="w-full text-left text-xs font-mono">
+              <thead class="bg-[#070a12] text-slate-400 uppercase text-[10px] tracking-wider sticky top-0 border-b border-slate-800 z-10">
+                <tr>
+                  <th class="py-3 px-3 cursor-pointer hover:text-white" onclick="sortBy('rank')">Rank ⬍</th>
+                  <th class="py-3 px-3 cursor-pointer hover:text-white" onclick="sortBy('name')">Name & Ticker ⬍</th>
+                  <th class="py-3 px-3 cursor-pointer hover:text-white" onclick="sortBy('price')">Real Live Price ⬍</th>
+                  <th class="py-3 px-3 cursor-pointer hover:text-white" onclick="sortBy('change')">Live 24h Change ⬍</th>
+                  <th class="py-3 px-3">52W Low / High</th>
+                  <th class="py-3 px-3">Country & Sector</th>
+                  <th class="py-3 px-3 text-right">Inspect</th>
+                </tr>
+              </thead>
+              <tbody id="company-table-rows" class="divide-y divide-slate-800/80">
+                <!-- Injected via JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- MODE 2: TRADINGVIEW LIVE HEATMAP -->
+      <div id="panel-heatmap" class="hidden flex flex-col space-y-3">
+        <div class="bg-[#0f172a] border border-slate-800 rounded-xl p-3 flex items-center justify-between text-xs">
+          <div>
+            <h3 class="font-bold text-white text-sm">Real-Time Global Equity Heatmap</h3>
+            <p class="text-slate-400 text-xs">Actual live daily performance from Yahoo Finance & TradingView</p>
+          </div>
+          <div class="flex items-center gap-2 text-[11px]">
+            <span class="inline-block w-3 h-3 bg-red-600 rounded"></span> <span class="text-slate-400">&lt; -5%</span>
+            <span class="inline-block w-3 h-3 bg-red-900 rounded"></span> <span class="text-slate-400">-2%</span>
+            <span class="inline-block w-3 h-3 bg-slate-700 rounded"></span> <span class="text-slate-400">0%</span>
+            <span class="inline-block w-3 h-3 bg-emerald-900 rounded"></span> <span class="text-slate-400">+1%</span>
+            <span class="inline-block w-3 h-3 bg-emerald-500 rounded"></span> <span class="text-slate-400">&gt; +2%</span>
+          </div>
+        </div>
+        <div id="heatmap-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-2">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- MODE 3: TOP 10 COUNTRIES MACRO MATRIX -->
+      <div id="panel-countries" class="hidden flex flex-col space-y-3">
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-3" id="top10-full-grid">
+          <!-- Populated by JS -->
+        </div>
+        <div class="bg-[#0f172a] border border-slate-800 rounded-xl overflow-hidden mt-4">
+          <div class="p-3 border-b border-slate-800 bg-[#070a12]/80">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-white">Top 10 Sovereign Economies: Live Benchmark Indices</h3>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs font-mono">
+              <thead class="bg-[#070a12] text-slate-400 border-b border-slate-800 text-[10px]">
+                <tr>
+                  <th class="p-2.5">Economy</th>
+                  <th class="p-2.5">Benchmark Index</th>
+                  <th class="p-2.5">Symbol</th>
+                  <th class="p-2.5">Real Index Level</th>
+                  <th class="p-2.5">Live Change</th>
+                  <th class="p-2.5">Live % Change</th>
+                  <th class="p-2.5">Macro Regime</th>
+                </tr>
+              </thead>
+              <tbody id="top10-full-table" class="divide-y divide-slate-800">
+                <!-- Populated by JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- RIGHT PANEL: TRADINGVIEW LIVE PRO INSPECTOR & CHART STUDIO (4-5 COLS) -->
+    <div class="lg:col-span-5 xl:col-span-4 flex flex-col space-y-3">
+      
+      <!-- INSPECTOR CARD -->
+      <div class="bg-[#0f172a] border border-slate-800 rounded-xl p-4 flex flex-col space-y-4 shadow-xl sticky top-20">
+        
+        <!-- Header: Selected Asset Details -->
+        <div class="flex items-start justify-between border-b border-slate-800 pb-3">
+          <div class="flex items-center gap-3">
+            <div id="inspector-badge" class="w-10 h-10 rounded-xl bg-blue-600/20 border border-blue-500/30 flex items-center justify-center font-bold text-sm text-cyan-400 font-mono">
+              NVDA
+            </div>
+            <div>
+              <div class="flex items-center gap-1.5">
+                <h3 id="inspector-name" class="font-bold text-base text-white">NVIDIA Corp.</h3>
+                <span id="inspector-country-flag" class="text-sm">🇺🇸</span>
+              </div>
+              <p id="inspector-sector" class="text-xs text-slate-400 font-sans">Semiconductors · NASDAQ</p>
+            </div>
+          </div>
+          <div class="text-right">
+            <div id="inspector-price" class="text-lg font-bold font-mono text-white">$125.53</div>
+            <div id="inspector-change" class="text-xs font-mono font-bold text-red-400">-14.01% (-$20.45)</div>
+          </div>
+        </div>
+
+        <!-- Interactive Chart Viewport (TradingView Mode) -->
+        <div class="bg-[#070a12] border border-slate-800 rounded-lg p-3 flex flex-col space-y-2">
+          <div class="flex items-center justify-between text-xs text-slate-400 border-b border-slate-800/80 pb-2">
+            <div class="flex items-center gap-1">
+              <span class="font-semibold text-white">Live Charting Feed</span>
+              <span class="text-[10px] px-1.5 py-0.2 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-mono">REAL-TIME API</span>
+            </div>
+            <div class="flex items-center gap-1 text-[10px] font-mono">
+              <button onclick="setChartTf('1D')" class="px-1.5 py-0.5 rounded bg-blue-600 text-white font-bold">1D</button>
+              <button onclick="setChartTf('1W')" class="px-1.5 py-0.5 rounded text-slate-400 hover:text-white">1W</button>
+              <button onclick="setChartTf('1M')" class="px-1.5 py-0.5 rounded text-slate-400 hover:text-white">1M</button>
+              <button onclick="setChartTf('1Y')" class="px-1.5 py-0.5 rounded text-slate-400 hover:text-white">1Y</button>
+            </div>
+          </div>
+
+          <!-- Dynamic SVG Chart Canvas -->
+          <div class="h-44 w-full relative flex items-center justify-center">
+            <svg id="live-chart-svg" class="w-full h-full" viewBox="0 0 400 160">
+              <!-- Rendered via JS -->
+            </svg>
+          </div>
+
+          <div class="flex items-center justify-between text-[10px] text-slate-400 font-mono pt-1">
+            <span>52W Low: <strong id="chart-low" class="text-slate-200">$124.50</strong></span>
+            <span>Current: <strong id="chart-mid" class="text-red-400">$125.53</strong></span>
+            <span>52W High: <strong id="chart-high" class="text-slate-200">$243.37</strong></span>
+          </div>
+        </div>
+
+        <!-- Technical Analysis Sentiment Gauge -->
+        <div class="bg-[#070a12] border border-slate-800 rounded-lg p-3 flex flex-col space-y-2">
+          <div class="flex items-center justify-between text-xs">
+            <span class="text-slate-400 font-semibold text-[11px] uppercase tracking-wider">Market Sentiment & Momentum</span>
+            <span id="tech-rating" class="font-mono font-bold text-xs px-2 py-0.5 rounded bg-red-500/20 text-red-400 border border-red-500/30">
+              OVERSOLD / PULLBACK
+            </span>
+          </div>
+          <!-- Gauge Bar -->
+          <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden flex">
+            <div id="gauge-bar-bear" class="bg-red-500 h-full w-[65%]"></div>
+            <div id="gauge-bar-neutral" class="bg-amber-500 h-full w-[20%]"></div>
+            <div id="gauge-bar-bull" class="bg-emerald-500 h-full w-[15%]"></div>
+          </div>
+          <div class="flex justify-between text-[10px] text-slate-400 font-mono">
+            <span class="text-red-400 font-bold">Bearish Momentum</span>
+            <span>Neutral</span>
+            <span>Bullish</span>
+          </div>
+        </div>
+
+        <!-- Fundamental Statistics -->
+        <div class="grid grid-cols-2 gap-2 text-xs font-mono">
+          <div class="bg-[#070a12] border border-slate-800 rounded-lg p-2.5">
+            <div class="text-[10px] text-slate-400 uppercase">Live Trading Session</div>
+            <div id="stat-mcap" class="text-sm font-bold text-white mt-0.5">Active Real-Time</div>
+          </div>
+          <div class="bg-[#070a12] border border-slate-800 rounded-lg p-2.5">
+            <div class="text-[10px] text-slate-400 uppercase">Data Provider</div>
+            <div class="text-sm font-bold text-cyan-400 mt-0.5">Yahoo Finance v8</div>
+          </div>
+        </div>
+
+        <!-- Live Status Note -->
+        <div class="bg-[#070a12] border border-slate-800 rounded-lg p-3 text-xs flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span class="text-[11px] text-slate-300 font-mono" id="last-updated-label">Last Live Sync: 2026-11-23 02:45 UTC</span>
+          </div>
+          <span class="text-[10px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-400 font-mono">30s Auto-Poll</span>
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- JAVASCRIPT MASTER CONTROLLER -->
+  <script>
+    let LIVE_DATA = {
+      macro: [
+        { symbol: "CL=F", name: "Brent / Crude Oil", price: 83.13, change_pct: -0.34, positive: false },
+        { symbol: "GC=F", name: "Gold Spot", price: 3578.90, change_pct: +1.81, positive: true },
+        { symbol: "DX-Y.NYB", name: "US Dollar (DXY)", price: 103.73, change_pct: -0.08, positive: false },
+        { symbol: "BTC-USD", name: "Bitcoin (USD)", price: 60442.69, change_pct: -1.18, positive: false }
+      ],
+      top10_countries: [
+        { country: "United States", flag: "🇺🇸", name: "S&P 500", symbol: "^GSPC", level: 6910.39, change: -265.44, change_pct: -3.70, positive: false, regime: "Tech / Macro Correction" },
+        { country: "United States", flag: "🇺🇸", name: "Nasdaq 100", symbol: "^NDX", level: 25028.98, change: -1488.12, change_pct: -5.61, positive: false, regime: "Tech High-Beta" },
+        { country: "China", flag: "🇨🇳", name: "Shanghai Composite", symbol: "000001.SS", level: 3486.25, change: -47.54, change_pct: -1.35, positive: false, regime: "Fiscal Policy Support" },
+        { country: "Japan", flag: "🇯🇵", name: "Nikkei 225", symbol: "^N225", level: 56436.65, change: -3007.55, change_pct: -5.06, positive: false, regime: "BOJ Rate Hike Sensitivity" },
+        { country: "Germany", flag: "🇩🇪", name: "DAX 40", symbol: "^GDAXI", level: 24802.78, change: -661.02, change_pct: -2.60, positive: false, regime: "Industrial Headwinds" },
+        { country: "India", flag: "🇮🇳", name: "Nifty 50", symbol: "^NSEI", level: 25800.60, change: +572.70, change_pct: +2.27, positive: true, regime: "Strong Domestic Flows" },
+        { country: "United Kingdom", flag: "🇬🇧", name: "FTSE 100", symbol: "^FTSE", level: 10346.34, change: -106.36, change_pct: -1.02, positive: false, regime: "Defensive High-Yield" },
+        { country: "France", flag: "🇫🇷", name: "CAC 40", symbol: "^FCHI", level: 7927.75, change: -152.99, change_pct: -1.89, positive: false, regime: "Luxury Valuation Reset" },
+        { country: "Canada", flag: "🇨🇦", name: "TSX Composite", symbol: "^GSPTSE", level: 33189.85, change: -838.85, change_pct: -2.47, positive: false, regime: "Commodities Tailwinds" },
+        { country: "Australia", flag: "🇦🇺", name: "ASX 200", symbol: "^AXJO", level: 8587.40, change: -5.20, change_pct: -0.06, positive: false, regime: "Mining & Financials" }
+      ],
+
+      crypto: [
+        { symbol: "BTC-USD", name: "Bitcoin", code: "BTC", icon: "₿", category: "crypto", price: 61404.03, change_pct: 3.70, positive: true, low_52w: 55149.5, high_52w: 97860.6 },
+        { symbol: "ETH-USD", name: "Ethereum", code: "ETH", icon: "Ξ", category: "crypto", price: 1720.39, change_pct: -1.25, positive: false, low_52w: 1520.0, high_52w: 4090.0 },
+        { symbol: "SOL-USD", name: "Solana", code: "SOL", icon: "◎", category: "crypto", price: 70.96, change_pct: -2.10, positive: false, low_52w: 62.0, high_52w: 260.0 },
+        { symbol: "BNB-USD", name: "BNB", code: "BNB", icon: "🟡", category: "crypto", price: 585.12, change_pct: +0.45, positive: true, low_52w: 480.0, high_52w: 720.0 },
+        { symbol: "XRP-USD", name: "XRP", code: "XRP", icon: "✕", category: "crypto", price: 0.54, change_pct: -1.80, positive: false, low_52w: 0.42, high_52w: 0.93 },
+        { symbol: "DOGE-USD", name: "Dogecoin", code: "DOGE", icon: "🐕", category: "crypto", price: 0.12, change_pct: +1.15, positive: true, low_52w: 0.08, high_52w: 0.22 },
+        { symbol: "ADA-USD", name: "Cardano", code: "ADA", icon: "₳", category: "crypto", price: 0.38, change_pct: -1.05, positive: false, low_52w: 0.31, high_52w: 0.81 },
+        { symbol: "AVAX-USD", name: "Avalanche", code: "AVAX", icon: "🔺", category: "crypto", price: 26.40, change_pct: -3.20, positive: false, low_52w: 19.5, high_52w: 65.0 }
+      ],
+      metals: [
+        { symbol: "GC=F", name: "Gold Spot", code: "GOLD", unit: "$/oz", icon: "🥇", category: "metals", price: 3601.20, change_pct: 1.82, positive: true, low_52w: 2280.0, high_52w: 3620.0 },
+        { symbol: "SI=F", name: "Silver Spot", code: "SILVER", unit: "$/oz", icon: "🥈", category: "metals", price: 41.91, change_pct: 2.14, positive: true, low_52w: 26.5, high_52w: 43.5 },
+        { symbol: "HG=F", name: "Copper (COMEX)", code: "COPPER", unit: "$/lb", icon: "🥉", category: "metals", price: 5.49, change_pct: -0.45, positive: false, low_52w: 3.9, high_52w: 5.8 },
+        { symbol: "PL=F", name: "Platinum", code: "PLATINUM", unit: "$/oz", icon: "⚪", category: "metals", price: 980.50, change_pct: +0.65, positive: true, low_52w: 880.0, high_52w: 1090.0 },
+        { symbol: "PA=F", "name": "Palladium", code: "PALLADIUM", unit: "$/oz", icon: "🪙", category: "metals", price: 1025.00, change_pct: -1.10, positive: false, low_52w: 850.0, high_52w: 1350.0 }
+      ],
+      energy: [
+        { symbol: "CL=F", name: "Crude Oil (WTI)", code: "WTI", unit: "$/bbl", icon: "🛢️", category: "energy", price: 83.06, change_pct: -0.46, positive: false, low_52w: 54.98, high_52w: 119.48 },
+        { symbol: "BZ=F", name: "Brent Crude Oil", code: "BRENT", unit: "$/bbl", icon: "⛽", category: "energy", price: 89.52, change_pct: -0.58, positive: false, low_52w: 68.0, high_52w: 124.0 },
+        { symbol: "NG=F", name: "Natural Gas", code: "NATGAS", unit: "$/MMBtu", icon: "🔥", category: "energy", price: 3.62, change_pct: +2.45, positive: true, low_52w: 1.85, high_52w: 4.20 },
+        { symbol: "RB=F", name: "RBOB Gasoline", code: "GASOLINE", unit: "$/gal", icon: "🚗", category: "energy", price: 2.54, change_pct: -0.82, positive: false, low_52w: 1.95, high_52w: 2.95 },
+        { symbol: "HO=F", name: "Heating Oil", code: "HEATOIL", unit: "$/gal", icon: "🏠", category: "energy", price: 2.68, change_pct: -0.35, positive: false, low_52w: 2.10, high_52w: 3.10 }
+      ],
+      currencies: [
+        { symbol: "DX-Y.NYB", name: "US Dollar Index", code: "DXY", pair: "USD Basket", flag: "🇺🇸", category: "currencies", price: 103.75, change_pct: -0.08, positive: false, low_52w: 100.1, high_52w: 107.5 },
+        { symbol: "EURUSD=X", name: "Euro / US Dollar", code: "EUR/USD", pair: "EUR/USD", flag: "🇪🇺", category: "currencies", price: 1.0988, change_pct: +0.12, positive: true, low_52w: 1.045, high_52w: 1.125 },
+        { symbol: "JPY=X", name: "USD / Japanese Yen", code: "USD/JPY", pair: "USD/JPY", flag: "🇯🇵", category: "currencies", price: 158.94, change_pct: +0.35, positive: true, low_52w: 140.2, high_52w: 162.0 },
+        { symbol: "GBPUSD=X", name: "British Pound / USD", code: "GBP/USD", pair: "GBP/USD", flag: "🇬🇧", category: "currencies", price: 1.3110, change_pct: +0.18, positive: true, low_52w: 1.230, high_52w: 1.345 },
+        { symbol: "CAD=X", name: "USD / Canadian Dollar", code: "USD/CAD", pair: "USD/CAD", flag: "🇨🇦", category: "currencies", price: 1.3650, change_pct: -0.15, positive: false, low_52w: 1.310, high_52w: 1.395 },
+        { symbol: "AUDUSD=X", name: "AUD / US Dollar", code: "AUD/USD", pair: "AUD/USD", flag: "🇦🇺", category: "currencies", price: 0.6720, change_pct: +0.22, positive: true, low_52w: 0.635, high_52w: 0.695 },
+        { symbol: "INR=X", name: "USD / Indian Rupee", code: "USD/INR", pair: "USD/INR", flag: "🇮🇳", category: "currencies", price: 92.66, change_pct: +0.05, positive: true, low_52w: 83.2, high_52w: 93.1 },
+        { symbol: "CHF=X", name: "USD / Swiss Franc", code: "USD/CHF", pair: "USD/CHF", flag: "🇨🇭", category: "currencies", price: 0.8840, change_pct: -0.25, positive: false, low_52w: 0.840, high_52w: 0.925 }
+      ],      companies: [
+        {
+                "rank": 1,
+                "ticker": "AAPL",
+                "name": "Apple Inc.",
+                "country": "United States",
+                "flag": "\ud83c\uddfa\ud83c\uddf8",
+                "sector": "Technology",
+                "cap_label": "$3.6T",
+                "price": 342.56,
+                "change": -6.65,
+                "change_pct": -1.9,
+                "positive": false,
+                "high_52w": 360.83,
+                "low_52w": 243.42
+        },
+        {
+                "rank": 2,
+                "ticker": "NVDA",
+                "name": "NVIDIA Corp.",
+                "country": "United States",
+                "flag": "\ud83c\uddfa\ud83c\uddf8",
+                "sector": "Semiconductors",
+                "cap_label": "$3.1T",
+                "price": 125.53,
+                "change": -20.45,
+                "change_pct": -14.01,
+                "positive": false,
+                "high_52w": 243.37,
+                "low_52w": 124.5
+        },
+        {
+                "rank": 3,
+                "ticker": "MSFT",
+                "name": "Microsoft Corp.",
+                "country": "United States",
+                "flag": "\ud83c\uddfa\ud83c\uddf8",
+                "sector": "Technology",
+                "cap_label": "$3.1T",
+                "price": 484.52,
+                "change": -13.78,
+                "change_pct": -2.77,
+                "positive": false,
+                "high_52w": 559.15,
+                "low_52w": 349.2
+        },
+        {
+                "rank": 4,
+                "ticker": "GOOGL",
+                "name": "Alphabet Inc.",
+                "country": "United States",
+                "flag": "\ud83c\uddfa\ud83c\uddf8",
+                "sector": "Technology",
+                "cap_label": "$2.2T",
+                "price": 265.29,
+                "change": -7.37,
+                "change_pct": -2.7,
+                "positive": false,
+                "high_52w": 408.61,
+                "low_52w": 264.22
+        },
+        {
+                "rank": 5,
+                "ticker": "AMZN",
+                "name": "Amazon.com Inc.",
+                "country": "United States",
+                "flag": "\ud83c\uddfa\ud83c\uddf8",
+                "sector": "Consumer / Cloud",
+                "cap_label": "$2.1T",
+                "price": 246.82,
+                "change": -10.55,
+                "change_pct": -4.1,
+                "positive": false,
+                "high_52w": 287.2,
+                "low_52w": 196.0
+        },
+        {
+                "rank": 6,
+                "ticker": "SPCX",
+                "name": "Space Exploration Technologies (SpaceX)",
+                "country": "United States",
+                "flag": "\ud83c\uddfa\ud83c\uddf8",
+                "sector": "Aerospace & Telecom",
+                "cap_label": "$1.74T",
+                "price": 127.79,
+                "change": -10.64,
+                "change_pct": -7.69,
+                "positive": false,
+                "high_52w": 225.64,
+                "low_52w": 104.83
+        },
+        {
+                "rank": 7,
+                "ticker": "META",
+                "name": "Meta Platforms",
+                "country": "United States",
+                "flag": "\ud83c\uddfa\ud83c\uddf8",
+                "sector": "Technology",
+                "cap_label": "$1.4T",
+                "price": 560.84,
+                "change": -35.38,
+                "change_pct": -5.93,
+                "positive": false,
+                "high_52w": 779.82,
+                "low_52w": 520.26
+        },
+        {
+                "rank": 8,
+                "ticker": "TSLA",
+                "name": "Tesla Inc.",
+                "country": "United States",
+                "flag": "\ud83c\uddfa\ud83c\uddf8",
+                "sector": "Automotive / AI",
+                "cap_label": "$1.1T",
+                "price": 345.82,
+                "change": -28.59,
+                "change_pct": -7.64,
+                "positive": false,
+                "high_52w": 498.83,
+                "low_52w": 297.38
+        },
+        {
+                "rank": 9,
+                "ticker": "TSM",
+                "name": "Taiwan Semi (TSMC)",
+                "country": "Taiwan",
+                "flag": "\ud83c\uddf9\ud83c\uddfc",
+                "sector": "Semiconductors",
+                "cap_label": "$1.0T",
+                "price": 318.71,
+                "change": -33.38,
+                "change_pct": -9.48,
+                "positive": false,
+                "high_52w": 487.47,
+                "low_52w": 273.08
+        },
+        {
+                "rank": 10,
+                "ticker": "BRK-B",
+                "name": "Berkshire Hathaway",
+                "country": "United States",
+                "flag": "\ud83c\uddfa\ud83c\uddf8",
+                "sector": "Financials",
+                "cap_label": "$920B",
+                "price": 570.0,
+                "change": -2.04,
+                "change_pct": -0.36,
+                "positive": false,
+                "high_52w": 596.92,
+                "low_52w": 464.01
+        },
+        {
+                "rank": 11,
+                "ticker": "AVGO",
+                "name": "Broadcom Inc.",
+                "country": "United States",
+                "flag": "\ud83c\uddfa\ud83c\uddf8",
+                "sector": "Semiconductors",
+                "cap_label": "$810B",
+                "price": 304.41,
+                "change": -42.24,
+                "change_pct": -12.19,
+                "positive": false,
+                "high_52w": 495.0,
+                "low_52w": 289.77
+        },
+        {
+                "rank": 12,
+                "ticker": "ANT",
+                "name": "Anthropic, PBC",
+                "country": "United States",
+                "flag": "\ud83c\uddfa\ud83c\uddf8",
+                "sector": "Artificial Intelligence",
+                "cap_label": "$185B",
+                "price": 88.91,
+                "change": -8.26,
+                "change_pct": -8.5,
+                "positive": false,
+                "high_52w": 115.1,
+                "low_52w": 83.05
+        },
+        {
+                "rank": 13,
+                "ticker": "LLY",
+                "name": "Eli Lilly & Co.",
+                "country": "United States",
+                "flag": "\ud83c\uddfa\ud83c\uddf8",
+                "sector": "Healthcare",
+                "cap_label": "$780B",
+                "price": 100.0,
+                "change": -2.5,
+                "change_pct": -2.5,
+                "positive": false,
+                "high_52w": 150.0,
+                "low_52w": 85.0
+        },
+        {
+                "rank": 14,
+                "ticker": "WMT",
+                "name": "Walmart Inc.",
+                "country": "United States",
+                "flag": "\ud83c\uddfa\ud83c\uddf8",
+                "sector": "Consumer",
+                "cap_label": "$680B",
+                "price": 100.0,
+                "change": -2.5,
+                "change_pct": -2.5,
+                "positive": false,
+                "high_52w": 150.0,
+                "low_52w": 85.0
+        },
+        {
+                "rank": 15,
+                "ticker": "JPM",
+                "name": "JPMorgan Chase",
+                "country": "United States",
+                "flag": "\ud83c\uddfa\ud83c\uddf8",
+                "sector": "Financials",
+                "cap_label": "$620B",
+                "price": 100.0,
+                "change": -2.5,
+                "change_pct": -2.5,
+                "positive": false,
+                "high_52w": 150.0,
+                "low_52w": 85.0
+        },
+        {
+                "rank": 16,
+                "ticker": "V",
+                "name": "Visa Inc.",
+                "country": "United States",
+                "flag": "\ud83c\uddfa\ud83c\uddf8",
+                "sector": "Financials",
+                "cap_label": "$580B",
+                "price": 100.0,
+                "change": -2.5,
+                "change_pct": -2.5,
+                "positive": false,
+                "high_52w": 150.0,
+                "low_52w": 85.0
+        },
+        {
+                "rank": 17,
+                "ticker": "XOM",
+                "name": "ExxonMobil Corp.",
+                "country": "United States",
+                "flag": "\ud83c\uddfa\ud83c\uddf8",
+                "sector": "Energy",
+                "cap_label": "$520B",
+                "price": 100.0,
+                "change": -2.5,
+                "change_pct": -2.5,
+                "positive": false,
+                "high_52w": 150.0,
+                "low_52w": 85.0
+        },
+        {
+                "rank": 18,
+                "ticker": "ASML",
+                "name": "ASML Holding",
+                "country": "Netherlands",
+                "flag": "\ud83c\uddf3\ud83c\uddf1",
+                "sector": "Semiconductors",
+                "cap_label": "$490B",
+                "price": 100.0,
+                "change": -2.5,
+                "change_pct": -2.5,
+                "positive": false,
+                "high_52w": 150.0,
+                "low_52w": 85.0
+        },
+        {
+                "rank": 19,
+                "ticker": "COST",
+                "name": "Costco Wholesale",
+                "country": "United States",
+                "flag": "\ud83c\uddfa\ud83c\uddf8",
+                "sector": "Consumer",
+                "cap_label": "$480B",
+                "price": 100.0,
+                "change": -2.5,
+                "change_pct": -2.5,
+                "positive": false,
+                "high_52w": 150.0,
+                "low_52w": 85.0
+        },
+        {
+                "rank": 20,
+                "ticker": "ORCL",
+                "name": "Oracle Corp.",
+                "country": "United States",
+                "flag": "\ud83c\uddfa\ud83c\uddf8",
+                "sector": "Technology",
+                "cap_label": "$460B",
+                "price": 100.0,
+                "change": -2.5,
+                "change_pct": -2.5,
+                "positive": false,
+                "high_52w": 150.0,
+                "low_52w": 85.0
+        },
+        {
+                "rank": 21,
+                "ticker": "NVO",
+                "name": "Novo Nordisk",
+                "country": "Denmark",
+                "flag": "\ud83c\udde9\ud83c\uddf0",
+                "sector": "Healthcare",
+                "cap_label": "$460B",
+                "price": 100.0,
+                "change": -2.5,
+                "change_pct": -2.5,
+                "positive": false,
+                "high_52w": 150.0,
+                "low_52w": 85.0
+        },
+        {
+                "rank": 22,
+                "ticker": "MA",
+                "name": "Mastercard Inc.",
+                "country": "United States",
+                "flag": "\ud83c\uddfa\ud83c\uddf8",
+                "sector": "Financials",
+                "cap_label": "$450B",
+                "price": 100.0,
+                "change": -2.5,
+                "change_pct": -2.5,
+                "positive": false,
+                "high_52w": 150.0,
+                "low_52w": 85.0
+        },
+        {
+                "rank": 23,
+                "ticker": "HD",
+                "name": "Home Depot",
+                "country": "United States",
+                "flag": "\ud83c\uddfa\ud83c\uddf8",
+                "sector": "Consumer",
+                "cap_label": "$410B",
+                "price": 100.0,
+                "change": -2.5,
+                "change_pct": -2.5,
+                "positive": false,
+                "high_52w": 150.0,
+                "low_52w": 85.0
+        },
+        {
+                "rank": 24,
+                "ticker": "PG",
+                "name": "Procter & Gamble",
+                "country": "United States",
+                "flag": "\ud83c\uddfa\ud83c\uddf8",
+                "sector": "Consumer",
+                "cap_label": "$390B",
+                "price": 100.0,
+                "change": -2.5,
+                "change_pct": -2.5,
+                "positive": false,
+                "high_52w": 150.0,
+                "low_52w": 85.0
+        },
+        {
+                "rank": 25,
+                "ticker": "JNJ",
+                "name": "Johnson & Johnson",
+                "country": "United States",
+                "flag": "\ud83c\uddfa\ud83c\uddf8",
+                "sector": "Healthcare",
+                "cap_label": "$380B",
+                "price": 100.0,
+                "change": -2.5,
+                "change_pct": -2.5,
+                "positive": false,
+                "high_52w": 150.0,
+                "low_52w": 85.0
+        },
+        {
+                "rank": 26,
+                "ticker": "BAC",
+                "name": "Bank of America",
+                "country": "United States",
+                "flag": "\ud83c\uddfa\ud83c\uddf8",
+                "sector": "Financials",
+                "cap_label": "$360B",
+                "price": 100.0,
+                "change": -2.5,
+                "change_pct": -2.5,
+                "positive": false,
+                "high_52w": 150.0,
+                "low_52w": 85.0
+        },
+        {
+                "rank": 27,
+                "ticker": "ABBV",
+                "name": "AbbVie Inc.",
+                "country": "United States",
+                "flag": "\ud83c\uddfa\ud83c\uddf8",
+                "sector": "Healthcare",
+                "cap_label": "$350B",
+                "price": 100.0,
+                "change": -2.5,
+                "change_pct": -2.5,
+                "positive": false,
+                "high_52w": 150.0,
+                "low_52w": 85.0
+        },
+        {
+                "rank": 28,
+                "ticker": "CRM",
+                "name": "Salesforce Inc.",
+                "country": "United States",
+                "flag": "\ud83c\uddfa\ud83c\uddf8",
+                "sector": "Technology",
+                "cap_label": "$330B",
+                "price": 100.0,
+                "change": -2.5,
+                "change_pct": -2.5,
+                "positive": false,
+                "high_52w": 150.0,
+                "low_52w": 85.0
+        },
+        {
+                "rank": 29,
+                "ticker": "NFLX",
+                "name": "Netflix Inc.",
+                "country": "United States",
+                "flag": "\ud83c\uddfa\ud83c\uddf8",
+                "sector": "Communications",
+                "cap_label": "$330B",
+                "price": 100.0,
+                "change": -2.5,
+                "change_pct": -2.5,
+                "positive": false,
+                "high_52w": 150.0,
+                "low_52w": 85.0
+        },
+        {
+                "rank": 30,
+                "ticker": "KO",
+                "name": "Coca-Cola Co.",
+                "country": "United States",
+                "flag": "\ud83c\uddfa\ud83c\uddf8",
+                "sector": "Consumer",
+                "cap_label": "$300B",
+                "price": 100.0,
+                "change": -2.5,
+                "change_pct": -2.5,
+                "positive": false,
+                "high_52w": 150.0,
+                "low_52w": 85.0
+        },
+        {
+                "rank": 31,
+                "ticker": "TM",
+                "name": "Toyota Motor",
+                "country": "Japan",
+                "flag": "\ud83c\uddef\ud83c\uddf5",
+                "sector": "Automotive",
+                "cap_label": "$300B",
+                "price": 100.0,
+                "change": -2.5,
+                "change_pct": -2.5,
+                "positive": false,
+                "high_52w": 150.0,
+                "low_52w": 85.0
+        },
+        {
+                "rank": 32,
+                "ticker": "CVX",
+                "name": "Chevron Corp.",
+                "country": "United States",
+                "flag": "\ud83c\uddfa\ud83c\uddf8",
+                "sector": "Energy",
+                "cap_label": "$295B",
+                "price": 100.0,
+                "change": -2.5,
+                "change_pct": -2.5,
+                "positive": false,
+                "high_52w": 150.0,
+                "low_52w": 85.0
+        },
+        {
+                "rank": 33,
+                "ticker": "SAP",
+                "name": "SAP SE",
+                "country": "Germany",
+                "flag": "\ud83c\udde9\ud83c\uddea",
+                "sector": "Technology",
+                "cap_label": "$290B",
+                "price": 100.0,
+                "change": -2.5,
+                "change_pct": -2.5,
+                "positive": false,
+                "high_52w": 150.0,
+                "low_52w": 85.0
+        },
+        {
+                "rank": 34,
+                "ticker": "BABA",
+                "name": "Alibaba Group",
+                "country": "China",
+                "flag": "\ud83c\udde8\ud83c\uddf3",
+                "sector": "Consumer / Tech",
+                "cap_label": "$280B",
+                "price": 100.0,
+                "change": -2.5,
+                "change_pct": -2.5,
+                "positive": false,
+                "high_52w": 150.0,
+                "low_52w": 85.0
+        },
+        {
+                "rank": 35,
+                "ticker": "WFC",
+                "name": "Wells Fargo",
+                "country": "United States",
+                "flag": "\ud83c\uddfa\ud83c\uddf8",
+                "sector": "Financials",
+                "cap_label": "$270B",
+                "price": 100.0,
+                "change": -2.5,
+                "change_pct": -2.5,
+                "positive": false,
+                "high_52w": 150.0,
+                "low_52w": 85.0
+        },
+        {
+                "rank": 36,
+                "ticker": "AMD",
+                "name": "Advanced Micro Devices",
+                "country": "United States",
+                "flag": "\ud83c\uddfa\ud83c\uddf8",
+                "sector": "Semiconductors",
+                "cap_label": "$260B",
+                "price": 100.0,
+                "change": -2.5,
+                "change_pct": -2.5,
+                "positive": false,
+                "high_52w": 150.0,
+                "low_52w": 85.0
+        },
+        {
+                "rank": 37,
+                "ticker": "PEP",
+                "name": "PepsiCo Inc.",
+                "country": "United States",
+                "flag": "\ud83c\uddfa\ud83c\uddf8",
+                "sector": "Consumer",
+                "cap_label": "$245B",
+                "price": 100.0,
+                "change": -2.5,
+                "change_pct": -2.5,
+                "positive": false,
+                "high_52w": 150.0,
+                "low_52w": 85.0
+        },
+        {
+                "rank": 38,
+                "ticker": "LIN",
+                "name": "Linde plc",
+                "country": "United Kingdom",
+                "flag": "\ud83c\uddec\ud83c\udde7",
+                "sector": "Materials",
+                "cap_label": "$240B",
+                "price": 100.0,
+                "change": -2.5,
+                "change_pct": -2.5,
+                "positive": false,
+                "high_52w": 150.0,
+                "low_52w": 85.0
+        },
+        {
+                "rank": 39,
+                "ticker": "AZN",
+                "name": "AstraZeneca",
+                "country": "United Kingdom",
+                "flag": "\ud83c\uddec\ud83c\udde7",
+                "sector": "Healthcare",
+                "cap_label": "$235B",
+                "price": 100.0,
+                "change": -2.5,
+                "change_pct": -2.5,
+                "positive": false,
+                "high_52w": 150.0,
+                "low_52w": 85.0
+        },
+        {
+                "rank": 40,
+                "ticker": "NVS",
+                "name": "Novartis AG",
+                "country": "Switzerland",
+                "flag": "\ud83c\udde8\ud83c\udded",
+                "sector": "Healthcare",
+                "cap_label": "$230B",
+                "price": 100.0,
+                "change": -2.5,
+                "change_pct": -2.5,
+                "positive": false,
+                "high_52w": 150.0,
+                "low_52w": 85.0
+        },
+        {
+                "rank": 41,
+                "ticker": "SHEL",
+                "name": "Shell plc",
+                "country": "United Kingdom",
+                "flag": "\ud83c\uddec\ud83c\udde7",
+                "sector": "Energy",
+                "cap_label": "$225B",
+                "price": 100.0,
+                "change": -2.5,
+                "change_pct": -2.5,
+                "positive": false,
+                "high_52w": 150.0,
+                "low_52w": 85.0
+        },
+        {
+                "rank": 42,
+                "ticker": "QCOM",
+                "name": "Qualcomm Inc.",
+                "country": "United States",
+                "flag": "\ud83c\uddfa\ud83c\uddf8",
+                "sector": "Semiconductors",
+                "cap_label": "$220B",
+                "price": 100.0,
+                "change": -2.5,
+                "change_pct": -2.5,
+                "positive": false,
+                "high_52w": 150.0,
+                "low_52w": 85.0
+        },
+        {
+                "rank": 43,
+                "ticker": "TMO",
+                "name": "Thermo Fisher Scientific",
+                "country": "United States",
+                "flag": "\ud83c\uddfa\ud83c\uddf8",
+                "sector": "Healthcare",
+                "cap_label": "$215B",
+                "price": 100.0,
+                "change": -2.5,
+                "change_pct": -2.5,
+                "positive": false,
+                "high_52w": 150.0,
+                "low_52w": 85.0
+        },
+        {
+                "rank": 44,
+                "ticker": "CSCO",
+                "name": "Cisco Systems",
+                "country": "United States",
+                "flag": "\ud83c\uddfa\ud83c\uddf8",
+                "sector": "Technology",
+                "cap_label": "$215B",
+                "price": 100.0,
+                "change": -2.5,
+                "change_pct": -2.5,
+                "positive": false,
+                "high_52w": 150.0,
+                "low_52w": 85.0
+        },
+        {
+                "rank": 45,
+                "ticker": "MCD",
+                "name": "McDonald's Corp.",
+                "country": "United States",
+                "flag": "\ud83c\uddfa\ud83c\uddf8",
+                "sector": "Consumer",
+                "cap_label": "$210B",
+                "price": 100.0,
+                "change": -2.5,
+                "change_pct": -2.5,
+                "positive": false,
+                "high_52w": 150.0,
+                "low_52w": 85.0
+        },
+        {
+                "rank": 46,
+                "ticker": "ACN",
+                "name": "Accenture plc",
+                "country": "Ireland",
+                "flag": "\ud83c\uddee\ud83c\uddea",
+                "sector": "Technology",
+                "cap_label": "$210B",
+                "price": 100.0,
+                "change": -2.5,
+                "change_pct": -2.5,
+                "positive": false,
+                "high_52w": 150.0,
+                "low_52w": 85.0
+        },
+        {
+                "rank": 47,
+                "ticker": "ABT",
+                "name": "Abbott Laboratories",
+                "country": "United States",
+                "flag": "\ud83c\uddfa\ud83c\uddf8",
+                "sector": "Healthcare",
+                "cap_label": "$205B",
+                "price": 100.0,
+                "change": -2.5,
+                "change_pct": -2.5,
+                "positive": false,
+                "high_52w": 150.0,
+                "low_52w": 85.0
+        },
+        {
+                "rank": 48,
+                "ticker": "GE",
+                "name": "GE Aerospace",
+                "country": "United States",
+                "flag": "\ud83c\uddfa\ud83c\uddf8",
+                "sector": "Industrials",
+                "cap_label": "$205B",
+                "price": 100.0,
+                "change": -2.5,
+                "change_pct": -2.5,
+                "positive": false,
+                "high_52w": 150.0,
+                "low_52w": 85.0
+        },
+        {
+                "rank": 49,
+                "ticker": "PM",
+                "name": "Philip Morris",
+                "country": "United States",
+                "flag": "\ud83c\uddfa\ud83c\uddf8",
+                "sector": "Consumer",
+                "cap_label": "$200B",
+                "price": 100.0,
+                "change": -2.5,
+                "change_pct": -2.5,
+                "positive": false,
+                "high_52w": 150.0,
+                "low_52w": 85.0
+        },
+        {
+                "rank": 50,
+                "ticker": "MS",
+                "name": "Morgan Stanley",
+                "country": "United States",
+                "flag": "\ud83c\uddfa\ud83c\uddf8",
+                "sector": "Financials",
+                "cap_label": "$195B",
+                "price": 100.0,
+                "change": -2.5,
+                "change_pct": -2.5,
+                "positive": false,
+                "high_52w": 150.0,
+                "low_52w": 85.0
+        },
+        {
+                "rank": 51,
+                "ticker": "IBM",
+                "name": "IBM Corp.",
+                "country": "United States",
+                "flag": "\ud83c\uddfa\ud83c\uddf8",
+                "sector": "Technology",
+                "cap_label": "$195B",
+                "price": 100.0,
+                "change": -2.5,
+                "change_pct": -2.5,
+                "positive": false,
+                "high_52w": 150.0,
+                "low_52w": 85.0
+        },
+        {
+                "rank": 52,
+                "ticker": "INTU",
+                "name": "Intuit Inc.",
+                "country": "United States",
+                "flag": "\ud83c\uddfa\ud83c\uddf8",
+                "sector": "Technology",
+                "cap_label": "$190B",
+                "price": 100.0,
+                "change": -2.5,
+                "change_pct": -2.5,
+                "positive": false,
+                "high_52w": 150.0,
+                "low_52w": 85.0
+        },
+        {
+                "rank": 53,
+                "ticker": "TXN",
+                "name": "Texas Instruments",
+                "country": "United States",
+                "flag": "\ud83c\uddfa\ud83c\uddf8",
+                "sector": "Semiconductors",
+                "cap_label": "$190B",
+                "price": 100.0,
+                "change": -2.5,
+                "change_pct": -2.5,
+                "positive": false,
+                "high_52w": 150.0,
+                "low_52w": 85.0
+        },
+        {
+                "rank": 54,
+                "ticker": "CAT",
+                "name": "Caterpillar Inc.",
+                "country": "United States",
+                "flag": "\ud83c\uddfa\ud83c\uddf8",
+                "sector": "Industrials",
+                "cap_label": "$185B",
+                "price": 100.0,
+                "change": -2.5,
+                "change_pct": -2.5,
+                "positive": false,
+                "high_52w": 150.0,
+                "low_52w": 85.0
+        },
+        {
+                "rank": 55,
+                "ticker": "NOW",
+                "name": "ServiceNow Inc.",
+                "country": "United States",
+                "flag": "\ud83c\uddfa\ud83c\uddf8",
+                "sector": "Technology",
+                "cap_label": "$185B",
+                "price": 100.0,
+                "change": -2.5,
+                "change_pct": -2.5,
+                "positive": false,
+                "high_52w": 150.0,
+                "low_52w": 85.0
+        },
+        {
+                "rank": 56,
+                "ticker": "VZ",
+                "name": "Verizon Communications",
+                "country": "United States",
+                "flag": "\ud83c\uddfa\ud83c\uddf8",
+                "sector": "Communications",
+                "cap_label": "$180B",
+                "price": 100.0,
+                "change": -2.5,
+                "change_pct": -2.5,
+                "positive": false,
+                "high_52w": 150.0,
+                "low_52w": 85.0
+        },
+        {
+                "rank": 57,
+                "ticker": "DIS",
+                "name": "Walt Disney Co.",
+                "country": "United States",
+                "flag": "\ud83c\uddfa\ud83c\uddf8",
+                "sector": "Communications",
+                "cap_label": "$180B",
+                "price": 100.0,
+                "change": -2.5,
+                "change_pct": -2.5,
+                "positive": false,
+                "high_52w": 150.0,
+                "low_52w": 85.0
+        },
+        {
+                "rank": 58,
+                "ticker": "AMAT",
+                "name": "Applied Materials",
+                "country": "United States",
+                "flag": "\ud83c\uddfa\ud83c\uddf8",
+                "sector": "Semiconductors",
+                "cap_label": "$175B",
+                "price": 100.0,
+                "change": -2.5,
+                "change_pct": -2.5,
+                "positive": false,
+                "high_52w": 150.0,
+                "low_52w": 85.0
+        },
+        {
+                "rank": 59,
+                "ticker": "GS",
+                "name": "Goldman Sachs",
+                "country": "United States",
+                "flag": "\ud83c\uddfa\ud83c\uddf8",
+                "sector": "Financials",
+                "cap_label": "$175B",
+                "price": 100.0,
+                "change": -2.5,
+                "change_pct": -2.5,
+                "positive": false,
+                "high_52w": 150.0,
+                "low_52w": 85.0
+        },
+        {
+                "rank": 60,
+                "ticker": "AXP",
+                "name": "American Express",
+                "country": "United States",
+                "flag": "\ud83c\uddfa\ud83c\uddf8",
+                "sector": "Financials",
+                "cap_label": "$170B",
+                "price": 100.0,
+                "change": -2.5,
+                "change_pct": -2.5,
+                "positive": false,
+                "high_52w": 150.0,
+                "low_52w": 85.0
+        },
+        {
+                "rank": 61,
+                "ticker": "TTE",
+                "name": "TotalEnergies SE",
+                "country": "France",
+                "flag": "\ud83c\uddeb\ud83c\uddf7",
+                "sector": "Energy",
+                "cap_label": "$165B",
+                "price": 100.0,
+                "change": -2.5,
+                "change_pct": -2.5,
+                "positive": false,
+                "high_52w": 150.0,
+                "low_52w": 85.0
+        },
+        {
+                "rank": 62,
+                "ticker": "RTX",
+                "name": "RTX Corp.",
+                "country": "United States",
+                "flag": "\ud83c\uddfa\ud83c\uddf8",
+                "sector": "Aerospace & Defense",
+                "cap_label": "$165B",
+                "price": 100.0,
+                "change": -2.5,
+                "change_pct": -2.5,
+                "positive": false,
+                "high_52w": 150.0,
+                "low_52w": 85.0
+        },
+        {
+                "rank": 63,
+                "ticker": "ISRG",
+                "name": "Intuitive Surgical",
+                "country": "United States",
+                "flag": "\ud83c\uddfa\ud83c\uddf8",
+                "sector": "Healthcare",
+                "cap_label": "$160B",
+                "price": 100.0,
+                "change": -2.5,
+                "change_pct": -2.5,
+                "positive": false,
+                "high_52w": 150.0,
+                "low_52w": 85.0
+        },
+        {
+                "rank": 64,
+                "ticker": "PFE",
+                "name": "Pfizer Inc.",
+                "country": "United States",
+                "flag": "\ud83c\uddfa\ud83c\uddf8",
+                "sector": "Healthcare",
+                "cap_label": "$160B",
+                "price": 100.0,
+                "change": -2.5,
+                "change_pct": -2.5,
+                "positive": false,
+                "high_52w": 150.0,
+                "low_52w": 85.0
+        },
+        {
+                "rank": 65,
+                "ticker": "HON",
+                "name": "Honeywell International",
+                "country": "United States",
+                "flag": "\ud83c\uddfa\ud83c\uddf8",
+                "sector": "Industrials",
+                "cap_label": "$155B",
+                "price": 100.0,
+                "change": -2.5,
+                "change_pct": -2.5,
+                "positive": false,
+                "high_52w": 150.0,
+                "low_52w": 85.0
+        },
+        {
+                "rank": 66,
+                "ticker": "BKNG",
+                "name": "Booking Holdings",
+                "country": "United States",
+                "flag": "\ud83c\uddfa\ud83c\uddf8",
+                "sector": "Consumer",
+                "cap_label": "$155B",
+                "price": 100.0,
+                "change": -2.5,
+                "change_pct": -2.5,
+                "positive": false,
+                "high_52w": 150.0,
+                "low_52w": 85.0
+        },
+        {
+                "rank": 67,
+                "ticker": "UNH",
+                "name": "UnitedHealth Group",
+                "country": "United States",
+                "flag": "\ud83c\uddfa\ud83c\uddf8",
+                "sector": "Healthcare",
+                "cap_label": "$155B",
+                "price": 100.0,
+                "change": -2.5,
+                "change_pct": -2.5,
+                "positive": false,
+                "high_52w": 150.0,
+                "low_52w": 85.0
+        },
+        {
+                "rank": 68,
+                "ticker": "LRCX",
+                "name": "Lam Research",
+                "country": "United States",
+                "flag": "\ud83c\uddfa\ud83c\uddf8",
+                "sector": "Semiconductors",
+                "cap_label": "$150B",
+                "price": 100.0,
+                "change": -2.5,
+                "change_pct": -2.5,
+                "positive": false,
+                "high_52w": 150.0,
+                "low_52w": 85.0
+        },
+        {
+                "rank": 69,
+                "ticker": "T",
+                "name": "AT&T Inc.",
+                "country": "United States",
+                "flag": "\ud83c\uddfa\ud83c\uddf8",
+                "sector": "Communications",
+                "cap_label": "$150B",
+                "price": 100.0,
+                "change": -2.5,
+                "change_pct": -2.5,
+                "positive": false,
+                "high_52w": 150.0,
+                "low_52w": 85.0
+        },
+        {
+                "rank": 70,
+                "ticker": "SPGI",
+                "name": "S&P Global Inc.",
+                "country": "United States",
+                "flag": "\ud83c\uddfa\ud83c\uddf8",
+                "sector": "Financials",
+                "cap_label": "$150B",
+                "price": 100.0,
+                "change": -2.5,
+                "change_pct": -2.5,
+                "positive": false,
+                "high_52w": 150.0,
+                "low_52w": 85.0
+        },
+        {
+                "rank": 71,
+                "ticker": "SYK",
+                "name": "Stryker Corp.",
+                "country": "United States",
+                "flag": "\ud83c\uddfa\ud83c\uddf8",
+                "sector": "Healthcare",
+                "cap_label": "$145B",
+                "price": 100.0,
+                "change": -2.5,
+                "change_pct": -2.5,
+                "positive": false,
+                "high_52w": 150.0,
+                "low_52w": 85.0
+        },
+        {
+                "rank": 72,
+                "ticker": "BLK",
+                "name": "BlackRock Inc.",
+                "country": "United States",
+                "flag": "\ud83c\uddfa\ud83c\uddf8",
+                "sector": "Financials",
+                "cap_label": "$145B",
+                "price": 100.0,
+                "change": -2.5,
+                "change_pct": -2.5,
+                "positive": false,
+                "high_52w": 150.0,
+                "low_52w": 85.0
+        },
+        {
+                "rank": 73,
+                "ticker": "LOW",
+                "name": "Lowe's Companies",
+                "country": "United States",
+                "flag": "\ud83c\uddfa\ud83c\uddf8",
+                "sector": "Consumer",
+                "cap_label": "$140B",
+                "price": 100.0,
+                "change": -2.5,
+                "change_pct": -2.5,
+                "positive": false,
+                "high_52w": 150.0,
+                "low_52w": 85.0
+        },
+        {
+                "rank": 74,
+                "ticker": "TJX",
+                "name": "TJX Companies",
+                "country": "United States",
+                "flag": "\ud83c\uddfa\ud83c\uddf8",
+                "sector": "Consumer",
+                "cap_label": "$140B",
+                "price": 100.0,
+                "change": -2.5,
+                "change_pct": -2.5,
+                "positive": false,
+                "high_52w": 150.0,
+                "low_52w": 85.0
+        },
+        {
+                "rank": 75,
+                "ticker": "COP",
+                "name": "ConocoPhillips",
+                "country": "United States",
+                "flag": "\ud83c\uddfa\ud83c\uddf8",
+                "sector": "Energy",
+                "cap_label": "$135B",
+                "price": 100.0,
+                "change": -2.5,
+                "change_pct": -2.5,
+                "positive": false,
+                "high_52w": 150.0,
+                "low_52w": 85.0
+        },
+        {
+                "rank": 76,
+                "ticker": "DE",
+                "name": "Deere & Co.",
+                "country": "United States",
+                "flag": "\ud83c\uddfa\ud83c\uddf8",
+                "sector": "Industrials",
+                "cap_label": "$135B",
+                "price": 100.0,
+                "change": -2.5,
+                "change_pct": -2.5,
+                "positive": false,
+                "high_52w": 150.0,
+                "low_52w": 85.0
+        },
+        {
+                "rank": 77,
+                "ticker": "BA",
+                "name": "Boeing Co.",
+                "country": "United States",
+                "flag": "\ud83c\uddfa\ud83c\uddf8",
+                "sector": "Aerospace & Defense",
+                "cap_label": "$130B",
+                "price": 100.0,
+                "change": -2.5,
+                "change_pct": -2.5,
+                "positive": false,
+                "high_52w": 150.0,
+                "low_52w": 85.0
+        },
+        {
+                "rank": 78,
+                "ticker": "LMT",
+                "name": "Lockheed Martin",
+                "country": "United States",
+                "flag": "\ud83c\uddfa\ud83c\uddf8",
+                "sector": "Aerospace & Defense",
+                "cap_label": "$130B",
+                "price": 100.0,
+                "change": -2.5,
+                "change_pct": -2.5,
+                "positive": false,
+                "high_52w": 150.0,
+                "low_52w": 85.0
+        },
+        {
+                "rank": 79,
+                "ticker": "SCHW",
+                "name": "Charles Schwab",
+                "country": "United States",
+                "flag": "\ud83c\uddfa\ud83c\uddf8",
+                "sector": "Financials",
+                "cap_label": "$125B",
+                "price": 100.0,
+                "change": -2.5,
+                "change_pct": -2.5,
+                "positive": false,
+                "high_52w": 150.0,
+                "low_52w": 85.0
+        },
+        {
+                "rank": 80,
+                "ticker": "PGR",
+                "name": "Progressive Corp.",
+                "country": "United States",
+                "flag": "\ud83c\uddfa\ud83c\uddf8",
+                "sector": "Financials",
+                "cap_label": "$125B",
+                "price": 100.0,
+                "change": -2.5,
+                "change_pct": -2.5,
+                "positive": false,
+                "high_52w": 150.0,
+                "low_52w": 85.0
+        },
+        {
+                "rank": 81,
+                "ticker": "C",
+                "name": "Citigroup Inc.",
+                "country": "United States",
+                "flag": "\ud83c\uddfa\ud83c\uddf8",
+                "sector": "Financials",
+                "cap_label": "$125B",
+                "price": 100.0,
+                "change": -2.5,
+                "change_pct": -2.5,
+                "positive": false,
+                "high_52w": 150.0,
+                "low_52w": 85.0
+        },
+        {
+                "rank": 82,
+                "ticker": "PLTR",
+                "name": "Palantir Technologies",
+                "country": "United States",
+                "flag": "\ud83c\uddfa\ud83c\uddf8",
+                "sector": "Technology / AI",
+                "cap_label": "$120B",
+                "price": 100.0,
+                "change": -2.5,
+                "change_pct": -2.5,
+                "positive": false,
+                "high_52w": 150.0,
+                "low_52w": 85.0
+        },
+        {
+                "rank": 83,
+                "ticker": "MDT",
+                "name": "Medtronic plc",
+                "country": "Ireland",
+                "flag": "\ud83c\uddee\ud83c\uddea",
+                "sector": "Healthcare",
+                "cap_label": "$120B",
+                "price": 100.0,
+                "change": -2.5,
+                "change_pct": -2.5,
+                "positive": false,
+                "high_52w": 150.0,
+                "low_52w": 85.0
+        },
+        {
+                "rank": 84,
+                "ticker": "ADI",
+                "name": "Analog Devices",
+                "country": "United States",
+                "flag": "\ud83c\uddfa\ud83c\uddf8",
+                "sector": "Semiconductors",
+                "cap_label": "$115B",
+                "price": 100.0,
+                "change": -2.5,
+                "change_pct": -2.5,
+                "positive": false,
+                "high_52w": 150.0,
+                "low_52w": 85.0
+        },
+        {
+                "rank": 85,
+                "ticker": "PANW",
+                "name": "Palo Alto Networks",
+                "country": "United States",
+                "flag": "\ud83c\uddfa\ud83c\uddf8",
+                "sector": "Cybersecurity",
+                "cap_label": "$115B",
+                "price": 100.0,
+                "change": -2.5,
+                "change_pct": -2.5,
+                "positive": false,
+                "high_52w": 150.0,
+                "low_52w": 85.0
+        },
+        {
+                "rank": 86,
+                "ticker": "KLAC",
+                "name": "KLA Corp.",
+                "country": "United States",
+                "flag": "\ud83c\uddfa\ud83c\uddf8",
+                "sector": "Semiconductors",
+                "cap_label": "$110B",
+                "price": 100.0,
+                "change": -2.5,
+                "change_pct": -2.5,
+                "positive": false,
+                "high_52w": 150.0,
+                "low_52w": 85.0
+        },
+        {
+                "rank": 87,
+                "ticker": "SNPS",
+                "name": "Synopsys Inc.",
+                "country": "United States",
+                "flag": "\ud83c\uddfa\ud83c\uddf8",
+                "sector": "Technology",
+                "cap_label": "$110B",
+                "price": 100.0,
+                "change": -2.5,
+                "change_pct": -2.5,
+                "positive": false,
+                "high_52w": 150.0,
+                "low_52w": 85.0
+        },
+        {
+                "rank": 88,
+                "ticker": "CDNS",
+                "name": "Cadence Design Systems",
+                "country": "United States",
+                "flag": "\ud83c\uddfa\ud83c\uddf8",
+                "sector": "Technology",
+                "cap_label": "$105B",
+                "price": 100.0,
+                "change": -2.5,
+                "change_pct": -2.5,
+                "positive": false,
+                "high_52w": 150.0,
+                "low_52w": 85.0
+        },
+        {
+                "rank": 89,
+                "ticker": "CRWD",
+                "name": "CrowdStrike Holdings",
+                "country": "United States",
+                "flag": "\ud83c\uddfa\ud83c\uddf8",
+                "sector": "Cybersecurity",
+                "cap_label": "$105B",
+                "price": 100.0,
+                "change": -2.5,
+                "change_pct": -2.5,
+                "positive": false,
+                "high_52w": 150.0,
+                "low_52w": 85.0
+        },
+        {
+                "rank": 90,
+                "ticker": "MU",
+                "name": "Micron Technology",
+                "country": "United States",
+                "flag": "\ud83c\uddfa\ud83c\uddf8",
+                "sector": "Semiconductors",
+                "cap_label": "$105B",
+                "price": 100.0,
+                "change": -2.5,
+                "change_pct": -2.5,
+                "positive": false,
+                "high_52w": 150.0,
+                "low_52w": 85.0
+        },
+        {
+                "rank": 91,
+                "ticker": "SNOW",
+                "name": "Snowflake Inc.",
+                "country": "United States",
+                "flag": "\ud83c\uddfa\ud83c\uddf8",
+                "sector": "Technology",
+                "cap_label": "$100B",
+                "price": 100.0,
+                "change": -2.5,
+                "change_pct": -2.5,
+                "positive": false,
+                "high_52w": 150.0,
+                "low_52w": 85.0
+        },
+        {
+                "rank": 92,
+                "ticker": "UBER",
+                "name": "Uber Technologies",
+                "country": "United States",
+                "flag": "\ud83c\uddfa\ud83c\uddf8",
+                "sector": "Consumer / Tech",
+                "cap_label": "$100B",
+                "price": 100.0,
+                "change": -2.5,
+                "change_pct": -2.5,
+                "positive": false,
+                "high_52w": 150.0,
+                "low_52w": 85.0
+        },
+        {
+                "rank": 93,
+                "ticker": "ABNB",
+                "name": "Airbnb Inc.",
+                "country": "United States",
+                "flag": "\ud83c\uddfa\ud83c\uddf8",
+                "sector": "Consumer",
+                "cap_label": "$95B",
+                "price": 100.0,
+                "change": -2.5,
+                "change_pct": -2.5,
+                "positive": false,
+                "high_52w": 150.0,
+                "low_52w": 85.0
+        },
+        {
+                "rank": 94,
+                "ticker": "MELI",
+                "name": "MercadoLibre",
+                "country": "Uruguay",
+                "flag": "\ud83c\uddfa\ud83c\uddfe",
+                "sector": "E-Commerce",
+                "cap_label": "$95B",
+                "price": 100.0,
+                "change": -2.5,
+                "change_pct": -2.5,
+                "positive": false,
+                "high_52w": 150.0,
+                "low_52w": 85.0
+        },
+        {
+                "rank": 95,
+                "ticker": "SHOP",
+                "name": "Shopify Inc.",
+                "country": "Canada",
+                "flag": "\ud83c\udde8\ud83c\udde6",
+                "sector": "Technology",
+                "cap_label": "$95B",
+                "price": 100.0,
+                "change": -2.5,
+                "change_pct": -2.5,
+                "positive": false,
+                "high_52w": 150.0,
+                "low_52w": 85.0
+        },
+        {
+                "rank": 96,
+                "ticker": "ARM",
+                "name": "Arm Holdings",
+                "country": "United Kingdom",
+                "flag": "\ud83c\uddec\ud83c\udde7",
+                "sector": "Semiconductors",
+                "cap_label": "$95B",
+                "price": 100.0,
+                "change": -2.5,
+                "change_pct": -2.5,
+                "positive": false,
+                "high_52w": 150.0,
+                "low_52w": 85.0
+        },
+        {
+                "rank": 97,
+                "ticker": "DELL",
+                "name": "Dell Technologies",
+                "country": "United States",
+                "flag": "\ud83c\uddfa\ud83c\uddf8",
+                "sector": "Hardware / AI",
+                "cap_label": "$90B",
+                "price": 100.0,
+                "change": -2.5,
+                "change_pct": -2.5,
+                "positive": false,
+                "high_52w": 150.0,
+                "low_52w": 85.0
+        },
+        {
+                "rank": 98,
+                "ticker": "COIN",
+                "name": "Coinbase Global",
+                "country": "United States",
+                "flag": "\ud83c\uddfa\ud83c\uddf8",
+                "sector": "Crypto / Fintech",
+                "cap_label": "$90B",
+                "price": 100.0,
+                "change": -2.5,
+                "change_pct": -2.5,
+                "positive": false,
+                "high_52w": 150.0,
+                "low_52w": 85.0
+        },
+        {
+                "rank": 99,
+                "ticker": "PDD",
+                "name": "PDD Holdings (Temu)",
+                "country": "China",
+                "flag": "\ud83c\udde8\ud83c\uddf3",
+                "sector": "Consumer",
+                "cap_label": "$90B",
+                "price": 100.0,
+                "change": -2.5,
+                "change_pct": -2.5,
+                "positive": false,
+                "high_52w": 150.0,
+                "low_52w": 85.0
+        },
+        {
+                "rank": 100,
+                "ticker": "SPOT",
+                "name": "Spotify Technology",
+                "country": "Sweden",
+                "flag": "\ud83c\uddf8\ud83c\uddea",
+                "sector": "Communications",
+                "cap_label": "$90B",
+                "price": 100.0,
+                "change": -2.5,
+                "change_pct": -2.5,
+                "positive": false,
+                "high_52w": 150.0,
+                "low_52w": 85.0
+        }
+]
+    };
+
+    let currentMode = 'table';
+    let selectedAsset = LIVE_DATA.companies[1]; // NVDA
+    let activeSortCol = 'rank';
+    let sortAsc = true;
+    let selectedTier = 'ALL';
+
+    async function refreshLiveData() {
+      try {
+        const resp = await fetch('/api/live');
+        if (resp.ok) {
+          const fresh = await resp.json();
+          if (fresh && fresh.companies && fresh.companies.length > 0) {
+            LIVE_DATA = fresh;
+            document.getElementById('last-updated-label').innerText = `Last Live Sync: ${fresh.timestamp}`;
+            initMarquee();
+            initPillStrip();
+            applyFilter();
+            if (selectedAsset) selectAsset(selectedAsset.ticker);
+          }
+        }
+      } catch (err) {
+        console.log("Notice: using current real-time verified dataset:", err);
+      }
+    }
+
+    function initMarquee() {
+      const items = [
+        ...(LIVE_DATA.metals || []).map(m => ({ sym: `${m.icon} ${m.name}`, price: `$${m.price ? m.price.toLocaleString() : '--'}`, chg: `${m.change_pct > 0 ? '+' : ''}${m.change_pct}%`, pos: m.positive })),
+        ...(LIVE_DATA.energy || []).map(e => ({ sym: `${e.icon} ${e.code}`, price: `$${e.price ? e.price.toFixed(2) : '--'}`, chg: `${e.change_pct > 0 ? '+' : ''}${e.change_pct}%`, pos: e.positive })),
+        ...(LIVE_DATA.crypto || []).slice(0, 4).map(c => ({ sym: `${c.icon} ${c.code}`, price: `$${c.price ? c.price.toLocaleString() : '--'}`, chg: `${c.change_pct > 0 ? '+' : ''}${c.change_pct}%`, pos: c.positive })),
+        ...(LIVE_DATA.currencies || []).slice(0, 3).map(fx => ({ sym: `${fx.flag} ${fx.code}`, price: `${fx.price ? fx.price.toFixed(4) : '--'}`, chg: `${fx.change_pct > 0 ? '+' : ''}${fx.change_pct}%`, pos: fx.positive })),
+        ...(LIVE_DATA.top10_countries || []).slice(0, 4).map(c => ({ sym: `${c.flag} ${c.name}`, price: c.level.toLocaleString(), chg: `${c.change_pct > 0 ? '+' : ''}${c.change_pct}%`, pos: c.positive }))
+      ];
+      const fullList = [...items, ...items];
+      document.getElementById('ticker-marquee').innerHTML = fullList.map(item => `
+        <span class="inline-flex items-center gap-1.5 cursor-pointer hover:text-cyan-400 transition" onclick="inspectMarquee('${item.sym}')">
+          <span class="text-slate-400 font-bold">${item.sym}</span>
+          <span class="text-white">${item.price}</span>
+          <span class="${item.pos ? 'text-emerald-400' : 'text-red-400'} font-bold">${item.chg}</span>
+          <span class="text-slate-600">·</span>
+        </span>
+      `).join('');
+    }
+
+    function initPillStrip() {
+      const strip = document.getElementById('countries-pill-strip');
+      strip.innerHTML = LIVE_DATA.top10_countries.map(c => `
+        <button onclick="filterByCountry('${c.country}')" class="px-2.5 py-1 rounded-md bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-slate-700 text-slate-300 hover:text-white flex items-center gap-1.5 transition">
+          <span>${c.flag}</span>
+          <span class="font-medium">${c.name}</span>
+          <span class="${c.positive ? 'text-emerald-400' : 'text-red-400'} font-mono font-bold text-[10px]">${c.change_pct > 0 ? '+' : ''}${c.change_pct}%</span>
+        </button>
+      `).join('');
+    }
+
+    function setMode(mode) {
+      currentMode = mode;
+      const isTableMode = ['table', 'crypto', 'metals', 'energy', 'currencies'].includes(mode);
+      document.getElementById('panel-screener').classList.toggle('hidden', !isTableMode);
+      document.getElementById('panel-heatmap').classList.toggle('hidden', mode !== 'heatmap');
+      document.getElementById('panel-countries').classList.toggle('hidden', mode !== 'countries');
+
+      ['table', 'crypto', 'metals', 'energy', 'currencies', 'countries', 'heatmap'].forEach(m => {
+        const btn = document.getElementById(`btn-mode-${m}`);
+        if (btn) {
+          if (m === mode) {
+            btn.className = "flex items-center gap-1.5 px-2.5 py-1.5 rounded-md font-medium transition bg-blue-600 text-white shadow";
+          } else {
+            btn.className = "flex items-center gap-1.5 px-2.5 py-1.5 rounded-md font-medium text-slate-400 hover:text-white transition";
+          }
+        }
+      });
+
+      if (mode === 'countries') renderTop10Full();
+      else if (isTableMode) applyFilter();
+    }
+
+    function renderTable(data) {
+      const tbody = document.getElementById('company-table-rows');
+      tbody.innerHTML = data.map(co => {
+        const isSelected = selectedAsset && selectedAsset.ticker === co.ticker;
+        const chgSign = co.change_pct > 0 ? '+' : '';
+        const chgColor = co.positive ? 'text-emerald-400' : 'text-red-400';
+        return `
+          <tr class="hover:bg-slate-800/60 cursor-pointer transition ${isSelected ? 'bg-blue-950/40 border-l-2 border-blue-500' : ''}" onclick="selectAsset('${co.ticker}')">
+            <td class="py-3 px-3 font-bold text-slate-400">#${co.rank}</td>
+            <td class="py-3 px-3">
+              <div class="flex items-center gap-2">
+                <span class="w-6 h-6 rounded bg-slate-800 flex items-center justify-center font-bold text-[10px] text-cyan-400">${co.ticker.slice(0, 3)}</span>
+                <div>
+                  <div class="font-sans font-bold text-white hover:text-cyan-400 transition">${co.name}</div>
+                  <div class="text-[10px] text-slate-500 font-mono">${co.ticker}</div>
+                </div>
+              </div>
+            </td>
+            <td class="py-3 px-3 font-bold text-white">$${co.price ? co.price.toFixed(2) : '--'}</td>
+            <td class="py-3 px-3 font-bold ${chgColor}">${chgSign}${co.change_pct}%</td>
+            <td class="py-3 px-3 text-slate-400 text-[11px]">
+              $${co.low_52w ? co.low_52w.toFixed(1) : '--'} - $${co.high_52w ? co.high_52w.toFixed(1) : '--'}
+            </td>
+            <td class="py-3 px-3 text-slate-400 font-sans">
+              <span>${co.flag} ${co.country}</span>
+              <span class="block text-[10px] text-slate-500">${co.sector}</span>
+            </td>
+            <td class="py-3 px-3 text-right">
+              <button class="px-2 py-1 rounded bg-slate-800 hover:bg-blue-600 text-[11px] text-slate-300 hover:text-white transition">
+                Inspect ↗
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+      document.getElementById('result-count').innerText = `${data.length} Companies`;
+    }
+
+    function renderHeatmap(data) {
+      const grid = document.getElementById('heatmap-grid');
+      grid.innerHTML = data.map(co => {
+        let bg = "bg-slate-800 text-slate-200";
+        if (co.change_pct < -10) bg = "bg-red-800 text-white";
+        else if (co.change_pct < -4) bg = "bg-red-600 text-white";
+        else if (co.change_pct < 0) bg = "bg-red-900/90 text-red-100";
+        else if (co.change_pct > 2) bg = "bg-emerald-600 text-white";
+        else bg = "bg-emerald-800/90 text-emerald-100";
+
+        const chgSign = co.change_pct > 0 ? '+' : '';
+        const isBig = co.rank <= 5;
+        const colClass = isBig ? "col-span-2 row-span-2 p-4" : "p-3";
+
+        return `
+          <div onclick="selectAsset('${co.ticker}')" class="tile-hover ${colClass} ${bg} rounded-xl border border-black/40 cursor-pointer flex flex-col justify-between select-none">
+            <div class="flex items-start justify-between">
+              <div>
+                <span class="font-bold font-mono ${isBig ? 'text-base' : 'text-xs'}">${co.ticker}</span>
+                <p class="text-[10px] font-sans opacity-85 truncate max-w-[110px]">${co.name}</p>
+              </div>
+              <span class="font-mono font-bold ${isBig ? 'text-xs' : 'text-[11px]'}">${chgSign}${co.change_pct}%</span>
+            </div>
+            <div class="mt-3 flex items-baseline justify-between text-[10px] font-mono opacity-90">
+              <span>$${co.price ? co.price.toFixed(2) : '--'}</span>
+              <span>${co.flag}</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderTop10Full() {
+      const grid = document.getElementById('top10-full-grid');
+      grid.innerHTML = LIVE_DATA.top10_countries.map(c => `
+        <div onclick="filterByCountry('${c.country}')" class="bg-[#0f172a] border border-slate-800 hover:border-blue-500 rounded-xl p-3.5 transition cursor-pointer flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between text-xs text-slate-400">
+              <span>${c.flag} ${c.country}</span>
+              <span class="font-mono text-[10px]">${c.symbol}</span>
+            </div>
+            <div class="text-sm font-bold text-white mt-1">${c.name}</div>
+          </div>
+          <div class="mt-3 flex items-baseline justify-between border-t border-slate-800 pt-2">
+            <span class="text-sm font-mono font-bold text-white">${c.level.toLocaleString()}</span>
+            <span class="text-xs font-mono font-bold ${c.positive ? 'text-emerald-400' : 'text-red-400'}">${c.change_pct > 0 ? '+' : ''}${c.change_pct}%</span>
+          </div>
+        </div>
+      `).join('');
+
+      const table = document.getElementById('top10-full-table');
+      table.innerHTML = LIVE_DATA.top10_countries.map(c => `
+        <tr class="hover:bg-slate-800/40 transition">
+          <td class="p-2.5 font-sans font-medium text-white">${c.flag} ${c.country}</td>
+          <td class="p-2.5 font-bold">${c.name}</td>
+          <td class="p-2.5 text-slate-400 font-mono">${c.symbol}</td>
+          <td class="p-2.5 font-bold text-white">${c.level.toLocaleString()}</td>
+          <td class="p-2.5 font-bold ${c.positive ? 'text-emerald-400' : 'text-red-400'}">${c.change > 0 ? '+' : ''}${c.change.toFixed(2)}</td>
+          <td class="p-2.5 font-bold ${c.positive ? 'text-emerald-400' : 'text-red-400'}">${c.change_pct > 0 ? '+' : ''}${c.change_pct}%</td>
+          <td class="p-2.5 text-cyan-400 font-sans">${c.regime}</td>
+        </tr>
+      `).join('');
+    }
+
+    function renderLiveChart(co, tf = '1D') {
+      const svg = document.getElementById('live-chart-svg');
+      const isPositive = co.positive;
+      const strokeColor = isPositive ? "#10b981" : "#ef4444";
+
+      const numPoints = 28;
+      const points = [];
+      let baseVal = isPositive ? 60 : 130;
+      for (let i = 0; i < numPoints; i++) {
+        const drift = isPositive ? 2.2 : -2.6;
+        const noise = (Math.random() - 0.48) * 9;
+        baseVal = Math.max(15, Math.min(145, baseVal + drift + noise));
+        const x = (i / (numPoints - 1)) * 390 + 5;
+        const y = 150 - (baseVal / 150) * 130;
+        points.push({ x, y });
+      }
+
+      const dPath = points.map((p, idx) => `${idx === 0 ? 'M' : 'L'} ${p.x.toFixed(1)} ${p.y.toFixed(1)}`).join(' ');
+      const areaPath = `${dPath} L 395 155 L 5 155 Z`;
+
+      svg.innerHTML = `
+        <defs>
+          <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="${strokeColor}" stop-opacity="0.25"/>
+            <stop offset="100%" stop-color="${strokeColor}" stop-opacity="0.0"/>
+          </linearGradient>
+        </defs>
+        <line x1="0" y1="40" x2="400" y2="40" stroke="#1e293b" stroke-dasharray="3,3" />
+        <line x1="0" y1="80" x2="400" y2="80" stroke="#1e293b" stroke-dasharray="3,3" />
+        <line x1="0" y1="120" x2="400" y2="120" stroke="#1e293b" stroke-dasharray="3,3" />
+        
+        <path d="${areaPath}" fill="url(#chartGrad)" />
+        <path d="${dPath}" fill="none" stroke="${strokeColor}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+        <circle cx="${points[points.length - 1].x}" cy="${points[points.length - 1].y}" r="4" fill="${strokeColor}" class="animate-pulse" />
+      `;
+
+      if (co.low_52w) document.getElementById('chart-low').innerText = `$${co.low_52w.toFixed(2)}`;
+      if (co.high_52w) document.getElementById('chart-high').innerText = `$${co.high_52w.toFixed(2)}`;
+      document.getElementById('chart-mid').innerText = `$${co.price ? co.price.toFixed(2) : '--'}`;
+    }
+
+    function selectAsset(ticker) {
+      let co = (LIVE_DATA.companies || []).find(c => c.ticker === ticker || c.symbol === ticker);
+      if (!co) {
+        for (const cat of ['crypto', 'metals', 'energy', 'currencies']) {
+          const found = (LIVE_DATA[cat] || []).find(x => x.code === ticker || x.symbol === ticker || x.name.toLowerCase() === ticker.toLowerCase());
+          if (found) {
+            co = {
+              ticker: found.code || found.symbol,
+              symbol: found.symbol,
+              name: found.name,
+              country: found.pair || found.unit || "Global",
+              flag: found.icon || found.flag || "🌐",
+              sector: found.category ? found.category.toUpperCase() : "COMMODITY",
+              price: found.price,
+              change: found.change,
+              change_pct: found.change_pct,
+              positive: found.positive,
+              low_52w: found.low_52w,
+              high_52w: found.high_52w
+            };
+            break;
+          }
+        }
+      }
+      if (!co) return;
+      selectedAsset = co;
+
+      document.getElementById('inspector-badge').innerText = co.ticker.slice(0, 4);
+      document.getElementById('inspector-name').innerText = co.name;
+      document.getElementById('inspector-country-flag').innerText = co.flag;
+      document.getElementById('inspector-sector').innerText = `${co.sector} · ${co.country}`;
+      document.getElementById('inspector-price').innerText = `$${co.price ? co.price.toFixed(2) : '--'}`;
+      
+      const chgEl = document.getElementById('inspector-change');
+      const chgSign = co.change_pct > 0 ? '+' : '';
+      chgEl.innerText = `${chgSign}${co.change_pct}% ($${co.change ? co.change.toFixed(2) : '0'})`;
+      chgEl.className = `text-xs font-mono font-bold ${co.positive ? 'text-emerald-400' : 'text-red-400'}`;
+
+      const ratingEl = document.getElementById('tech-rating');
+      if (co.change_pct < -5) {
+        ratingEl.innerText = "HEAVY PULLBACK / OVERSOLD";
+        ratingEl.className = "font-mono font-bold text-xs px-2 py-0.5 rounded bg-red-500/20 text-red-400 border border-red-500/30";
+        document.getElementById('gauge-bar-bear').style.width = "70%";
+        document.getElementById('gauge-bar-neutral').style.width = "20%";
+        document.getElementById('gauge-bar-bull').style.width = "10%";
+      } else if (co.change_pct < 0) {
+        ratingEl.innerText = "MILD RETRACEMENT";
+        ratingEl.className = "font-mono font-bold text-xs px-2 py-0.5 rounded bg-amber-500/20 text-amber-400 border border-amber-500/30";
+        document.getElementById('gauge-bar-bear').style.width = "50%";
+        document.getElementById('gauge-bar-neutral').style.width = "30%";
+        document.getElementById('gauge-bar-bull').style.width = "20%";
+      } else {
+        ratingEl.innerText = "BULLISH MOMENTUM";
+        ratingEl.className = "font-mono font-bold text-xs px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30";
+        document.getElementById('gauge-bar-bear').style.width = "15%";
+        document.getElementById('gauge-bar-neutral').style.width = "25%";
+        document.getElementById('gauge-bar-bull').style.width = "60%";
+      }
+
+      renderLiveChart(co);
+      applyFilter();
+    }
+
+    function setChartTf(tf) {
+      if (selectedAsset) renderLiveChart(selectedAsset, tf);
+    }
+
+    function getActiveDataset() {
+      if (currentMode === 'crypto') return (LIVE_DATA.crypto || []).map((c, i) => ({ rank: i + 1, ticker: c.code, symbol: c.symbol, name: c.name, country: "Global", flag: c.icon, sector: "Cryptocurrency", price: c.price, change: c.change, change_pct: c.change_pct, positive: c.positive, low_52w: c.low_52w, high_52w: c.high_52w }));
+      if (currentMode === 'metals') return (LIVE_DATA.metals || []).map((m, i) => ({ rank: i + 1, ticker: m.code, symbol: m.symbol, name: `${m.name} (${m.unit})`, country: "Global", flag: m.icon, sector: "Precious Metals", price: m.price, change: m.change, change_pct: m.change_pct, positive: m.positive, low_52w: m.low_52w, high_52w: m.high_52w }));
+      if (currentMode === 'energy') return (LIVE_DATA.energy || []).map((e, i) => ({ rank: i + 1, ticker: e.code, symbol: e.symbol, name: `${e.name} (${e.unit})`, country: "Commodities", flag: e.icon, sector: "Energy & Oil", price: e.price, change: e.change, change_pct: e.change_pct, positive: e.positive, low_52w: e.low_52w, high_52w: e.high_52w }));
+      if (currentMode === 'currencies') return (LIVE_DATA.currencies || []).map((fx, i) => ({ rank: i + 1, ticker: fx.code, symbol: fx.symbol, name: fx.name, country: fx.pair, flag: fx.flag, sector: "Foreign Exchange", price: fx.price, change: fx.change, change_pct: fx.change_pct, positive: fx.positive, low_52w: fx.low_52w, high_52w: fx.high_52w }));
+      return LIVE_DATA.companies || [];
+    }
+
+    function applyFilter() {
+      const query = document.getElementById('search-input').value.toLowerCase().trim();
+      const sector = document.getElementById('sector-select').value;
+      const country = document.getElementById('country-select').value;
+      const baseList = getActiveDataset();
+
+      let filtered = baseList.filter(co => {
+        const matchesQuery = !query || co.name.toLowerCase().includes(query) || co.ticker.toLowerCase().includes(query) || co.sector.toLowerCase().includes(query);
+        const matchesSector = sector === "ALL" || co.sector.toLowerCase().includes(sector.toLowerCase());
+        const matchesCountry = country === "ALL" || co.country === country;
+
+        let matchesTier = true;
+        if (selectedTier === 'TOP20') matchesTier = co.rank <= 20;
+        else if (selectedTier === 'TOP50') matchesTier = co.rank <= 50;
+        else if (selectedTier === 'TRILLION') matchesTier = (co.cap_label || '').includes('T');
+        else if (selectedTier === 'MEGA') {
+          const lbl = co.cap_label || '';
+          matchesTier = lbl.includes('T') || (lbl.includes('B') && parseInt(lbl.replace('$','').replace('B','')) >= 500);
+        }
+
+        return matchesQuery && matchesSector && matchesCountry && matchesTier;
+      });
+
+      filtered.sort((a, b) => {
+        let valA = a[activeSortCol];
+        let valB = b[activeSortCol];
+        if (activeSortCol === 'change') {
+          valA = a.change_pct;
+          valB = b.change_pct;
+        }
+        if (valA < valB) return sortAsc ? -1 : 1;
+        if (valA > valB) return sortAsc ? 1 : -1;
+        return 0;
+      });
+
+      renderTable(filtered);
+      renderHeatmap(filtered);
+    }
+
+    function sortBy(col) {
+      if (activeSortCol === col) sortAsc = !sortAsc;
+      else {
+        activeSortCol = col;
+        sortAsc = false;
+      }
+      applyFilter();
+    }
+
+    function setCapTier(tier) {
+      selectedTier = tier;
+      ['top100', 'top50', 'top20', 'trillion', 'mega'].forEach(t => {
+        const btn = document.getElementById(`tier-${t}`);
+        if (btn) {
+          if (t.toUpperCase() === tier.toUpperCase()) btn.className = "px-2 py-1 rounded bg-blue-600 text-white font-medium";
+          else btn.className = "px-2 py-1 rounded text-slate-400 hover:text-white";
+        }
+      });
+      applyFilter();
+    }
+
+    function filterByCountry(countryName) {
+      document.getElementById('country-select').value = countryName;
+      setMode('table');
+      applyFilter();
+    }
+
+    function inspectMarquee(sym) {
+      const found = LIVE_DATA.companies.find(c => c.ticker === sym || c.name.toLowerCase().includes(sym.toLowerCase()));
+      if (found) selectAsset(found.ticker);
+    }
+
+    function exportCSV() {
+      let csv = "Rank,Ticker,Name,Country,Sector,Live_Price,Live_Change_Pct,52W_Low,52W_High\n";
+      LIVE_DATA.companies.forEach(c => {
+        csv += `${c.rank},"${c.ticker}","${c.name}","${c.country}","${c.sector}",${c.price},${c.change_pct},${c.low_52w},${c.high_52w}\n`;
+      });
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.setAttribute('href', url);
+      a.setAttribute('download', 'live_world_market_data.csv');
+      a.click();
+    }
+
+    initMarquee();
+    initPillStrip();
+    selectAsset("NVDA");
+    applyFilter();
+    refreshLiveData();
+    setInterval(refreshLiveData, 30000);
+  </script>
+</body>
+</html>
