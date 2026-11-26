@@ -323,6 +323,60 @@
         <div id="news-cards-container" class="grid grid-cols-1 md:grid-cols-2 gap-3">
           <!-- Populated by JS -->
         </div>
+
+        <!-- IN-TERMINAL ARTICLE READER MODAL -->
+        <div id="article-reader-modal" class="hidden fixed inset-0 z-50 bg-black/85 backdrop-blur-sm flex items-center justify-center p-3 sm:p-5" onclick="if(event.target===this) closeArticleReader()">
+          <div class="bg-[#0b1120] border border-slate-700 rounded-2xl max-w-3xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
+            <!-- Modal Header -->
+            <div class="p-5 border-b border-slate-800 bg-[#0f172a] flex items-start justify-between gap-4">
+              <div class="flex-1">
+                <div class="flex items-center gap-2 mb-2 flex-wrap">
+                  <span id="modal-article-source" class="px-2 py-0.5 rounded bg-blue-500/10 text-cyan-400 border border-blue-500/20 text-xs font-mono font-bold">SOURCE</span>
+                  <span id="modal-article-date" class="text-xs text-slate-400 font-mono"></span>
+                  <span id="modal-article-readtime" class="text-xs text-slate-400 font-mono"></span>
+                </div>
+                <h2 id="modal-article-title" class="text-lg md:text-xl font-bold text-white leading-snug"></h2>
+                <p id="modal-article-author" class="text-xs text-slate-400 mt-1"></p>
+              </div>
+              <button onclick="closeArticleReader()" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center text-sm font-bold transition shrink-0">
+                ✕
+              </button>
+            </div>
+
+            <!-- Modal Content Scrollable Body -->
+            <div class="p-5 sm:p-6 overflow-y-auto space-y-4 text-slate-200 text-sm leading-relaxed">
+              <!-- Key Takeaways Box -->
+              <div id="modal-takeaways-box" class="bg-blue-950/30 border border-blue-500/30 rounded-xl p-4">
+                <h4 class="text-xs font-bold uppercase tracking-wider text-cyan-400 font-mono mb-2 flex items-center gap-1.5">
+                  <span>⚡</span> Institutional Executive Briefing
+                </h4>
+                <ul id="modal-article-takeaways" class="space-y-1.5 text-xs text-slate-300 list-disc list-inside"></ul>
+              </div>
+
+              <!-- Related Assets Pills -->
+              <div id="modal-related-tickers-box" class="flex items-center gap-2 flex-wrap bg-slate-900/60 p-2.5 rounded-lg border border-slate-800 text-xs">
+                <span class="text-slate-400 font-mono">Inspect Mentioned Assets:</span>
+                <div id="modal-related-tickers" class="flex items-center gap-1.5 flex-wrap"></div>
+              </div>
+
+              <!-- Full Article Body -->
+              <div id="modal-article-body" class="pt-3 border-t border-slate-800 text-slate-300 text-sm leading-relaxed"></div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="p-4 border-t border-slate-800 bg-[#0f172a] flex items-center justify-between text-xs font-mono">
+              <span class="text-slate-400 hidden sm:inline">Apex In-Terminal Native Reader</span>
+              <div class="flex items-center gap-3">
+                <a id="modal-original-link" href="#" target="_blank" rel="noopener noreferrer" class="text-cyan-400 hover:text-cyan-300 hover:underline flex items-center gap-1">
+                  <span>External Source</span> ↗
+                </a>
+                <button onclick="closeArticleReader()" class="px-3.5 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-medium transition shadow">
+                  Close Article
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
     </div>
@@ -2182,30 +2236,100 @@
     function renderNewsCards(items) {
       const container = document.getElementById('news-cards-container');
       if (!container) return;
-      container.innerHTML = items.map(item => `
-        <div class="bg-[#0f172a] border border-slate-800 hover:border-slate-700/80 rounded-xl p-4 flex flex-col justify-between transition hover:-translate-y-0.5 shadow-sm group">
-          <div>
-            <div class="flex items-center justify-between text-[11px] mb-2 font-mono">
-              <span class="text-cyan-400 font-bold tracking-wide">${item.source || 'GLOBAL WIRE'}</span>
-              <span class="text-slate-500">${new Date(item.date).toLocaleDateString(undefined, {month: 'short', day: 'numeric', hour: '2-digit', minute:'2-digit'})}</span>
+      container.innerHTML = items.map(item => {
+        const itemId = item.id || item.slug || item.title.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase();
+        return `
+          <div onclick="openArticleReader('${itemId}')" class="bg-[#0f172a] border border-slate-800 hover:border-blue-500/50 rounded-xl p-4 flex flex-col justify-between transition hover:-translate-y-0.5 shadow-sm group cursor-pointer">
+            <div>
+              <div class="flex items-center justify-between text-[11px] mb-2 font-mono">
+                <span class="text-cyan-400 font-bold tracking-wide">${item.source || 'GLOBAL WIRE'}</span>
+                <span class="text-slate-500">${new Date(item.date).toLocaleDateString(undefined, {month: 'short', day: 'numeric', hour: '2-digit', minute:'2-digit'})}</span>
+              </div>
+              <h4 class="font-bold text-slate-100 text-sm group-hover:text-cyan-300 transition leading-snug mb-2">
+                ${item.title}
+              </h4>
+              <p class="text-xs text-slate-400 line-clamp-3 leading-relaxed mb-3">
+                ${item.excerpt || item.summary || ''}
+              </p>
             </div>
-            <h4 class="font-bold text-slate-100 text-sm group-hover:text-cyan-300 transition leading-snug mb-2">
-              <a href="${item.link || item.source_url || '#'}" target="_blank" rel="noopener noreferrer">${item.title}</a>
-            </h4>
-            <p class="text-xs text-slate-400 line-clamp-3 leading-relaxed mb-3">
-              ${item.excerpt || item.summary || ''}
-            </p>
-          </div>
-          <div class="flex items-center justify-between pt-2 border-t border-slate-800/80 text-[11px]">
-            <div class="flex items-center gap-1.5 flex-wrap">
-              ${(item.tags || ['NEWS']).map(t => `<span class="px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 text-[10px] font-mono">${t}</span>`).join('')}
+            <div class="flex items-center justify-between pt-2 border-t border-slate-800/80 text-[11px]">
+              <div class="flex items-center gap-1.5 flex-wrap">
+                ${(item.tags || ['NEWS']).map(t => `<span class="px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 text-[10px] font-mono">${t}</span>`).join('')}
+              </div>
+              <button onclick="event.stopPropagation(); openArticleReader('${itemId}')" class="px-2.5 py-1 rounded bg-blue-600/20 hover:bg-blue-600 text-cyan-300 hover:text-white border border-blue-500/30 font-bold flex items-center gap-1 font-mono text-[11px] transition">
+                <span>📖 Read Article</span>
+              </button>
             </div>
-            <a href="${item.link || item.source_url || '#'}" target="_blank" rel="noopener noreferrer" class="text-cyan-400 hover:text-cyan-300 font-bold flex items-center gap-1 font-mono text-[11px]">
-              <span>Read Full</span> ↗
-            </a>
           </div>
-        </div>
-      `).join('');
+        `;
+      }).join('');
+    }
+
+    function openArticleReader(articleId) {
+      if (!cachedNewsItems || cachedNewsItems.length === 0) return;
+      const article = cachedNewsItems.find(a => (a.id === articleId || a.slug === articleId || a.title.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase() === articleId)) || cachedNewsItems[0];
+      if (!article) return;
+
+      document.getElementById('modal-article-source').innerText = article.source || 'GLOBAL WIRE';
+      document.getElementById('modal-article-date').innerText = new Date(article.date).toLocaleDateString(undefined, {month: 'long', day: 'numeric', year: 'numeric'});
+      document.getElementById('modal-article-readtime').innerText = `· ${article.reading_time_mins || 3} min read`;
+      document.getElementById('modal-article-title').innerText = article.title;
+      document.getElementById('modal-article-author').innerText = article.author ? `By ${article.author}` : 'Curated by Apex Market Intelligence';
+
+      // Takeaways
+      const takeawaysList = document.getElementById('modal-article-takeaways');
+      if (article.key_takeaways && article.key_takeaways.length > 0) {
+        takeawaysList.innerHTML = article.key_takeaways.map(t => `<li>${t}</li>`).join('');
+        document.getElementById('modal-takeaways-box').classList.remove('hidden');
+      } else {
+        document.getElementById('modal-takeaways-box').classList.add('hidden');
+      }
+
+      // Related Tickers
+      const tickersContainer = document.getElementById('modal-related-tickers');
+      const tickersBox = document.getElementById('modal-related-tickers-box');
+      if (article.related_tickers && article.related_tickers.length > 0) {
+        tickersContainer.innerHTML = article.related_tickers.map(sym => `
+          <button onclick="inspectFromModal('${sym}')" class="px-2 py-0.5 rounded bg-slate-800 hover:bg-cyan-500/20 text-cyan-300 border border-slate-700 hover:border-cyan-500/40 text-[11px] font-mono font-bold transition flex items-center gap-1">
+            <span>📈</span> ${sym}
+          </button>
+        `).join('');
+        tickersBox.classList.remove('hidden');
+      } else {
+        tickersBox.classList.add('hidden');
+      }
+
+      // Body
+      const bodyContainer = document.getElementById('modal-article-body');
+      if (article.full_content_html) {
+        bodyContainer.innerHTML = article.full_content_html;
+      } else if (article.full_content_markdown) {
+        bodyContainer.innerHTML = `<p class="whitespace-pre-line">${article.full_content_markdown}</p>`;
+      } else {
+        bodyContainer.innerHTML = `
+          <p class="mb-3">${article.excerpt || ''}</p>
+          <p class="text-slate-400 text-xs italic">Full content syndicated for institutional terminal users.</p>
+        `;
+      }
+
+      // Original link
+      const origLink = document.getElementById('modal-original-link');
+      origLink.href = article.source_url || article.link || '#';
+
+      document.getElementById('article-reader-modal').classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeArticleReader() {
+      const modal = document.getElementById('article-reader-modal');
+      if (modal) modal.classList.add('hidden');
+      document.body.style.overflow = '';
+    }
+
+    function inspectFromModal(ticker) {
+      closeArticleReader();
+      setMode('table');
+      selectAsset(ticker);
     }
 
     function renderTable(data) {
